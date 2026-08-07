@@ -23,10 +23,10 @@ There is no date on any of this. The features are listed in rough priority
 order, and the priority comes from how much bookkeeping each one removes
 versus how hard it is to build safely.
 
-**Progress:** 9 of the original 14 automatable features are now automated
-(Smite Evil, Dedication to Law and Good, Enemy Slayer, Dark Assassination,
-Charge Fury, Stubborn Vitality, Blink Away, Illusion Savvy, Battle Oath).
-Five remain below, plus four that are deliberately left to the table.
+**Progress:** 10 of the original 14 automatable features are now automated.
+Four remain below, plus three that are deliberately left to the table.
+Turn Undead moved from "stays manual" to a player-facing macro in the
+Reforged Utility Macros compendium.
 
 ## Likely next
 
@@ -89,8 +89,6 @@ These are probably not worth automating, and the module will likely leave
 them to the table. They depend on fiction, judgment, or free-form roleplay
 that no module can read:
 
-- **Cleric - Turn Undead** (the GM-facing table part): it works as a roll
-  and the results are a table the GM adjudicates.
 - **Social and reaction features** (Diplomat, Faith's Influence nuance,
   hireling morale): they live in conversation, not in numbers on a sheet.
 - **Downtime and domain play** (strongholds, research, carousing): they are
