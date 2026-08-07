@@ -5,9 +5,8 @@ Active Effects (static bonuses) and the runtime layer (hooks + chat buttons).
 Macros add a player-facing trigger to features that need a decision, without
 requiring the module to guess what the player is doing.
 
-This document explains the architecture, what the ecosystem proves is
-possible, and the macro inventory. Research sources and deep dives live in
-the private knowledge hub; this page is the actionable contract.
+This document explains the architecture and the macro inventory. It is the
+actionable contract for macro-based automation in this module.
 
 ## The core idea: macro sets state, module enforces it
 
@@ -17,8 +16,7 @@ write actor flags, post chat messages, show dialogs, and roll dice. But a
 macro is a one-shot: anything it sets up must survive after the macro
 returns.
 
-The pattern that works (proven by the whole macro ecosystem, from OSR
-helpers to PF2e charge-analogs):
+The pattern that works:
 
 1. The **macro** is the UI: it checks state, sets a flag, posts the
    announcement, and returns.
@@ -33,33 +31,27 @@ helpers to PF2e charge-analogs):
 Why not register hooks from inside a macro? A macro's `Hooks.on` registrations
 live only for the current client session and vanish on page reload. The
 module's own scripts re-register hooks on every load, so enforcement always
-lives in module code. This is the universal practice across the ecosystem
-(the Hook Macros and Macro Monkey modules exist precisely to re-wire
-macro-to-hook bindings from settings on every load).
+lives in module code.
 
-## What the ecosystem proves is possible
+## What macros can do
 
-Research across ~50 installed macro compendiums (PF2e, OSR, d100-family,
-Delta Green) plus the community repos confirms these capabilities, each
-with real implementations:
+| Capability | How |
+|---|---|
+| Modify the next attack roll, then vanish | Set flag/effect, consume in the attack wrapper, clear it |
+| Set state, read it later, clear it | Flag written by macro, read by module hook on the next roll |
+| Reset on kill / round / encounter / dawn | `updateActor` HP=0 hook, `combatRound`, `deleteCombat`, `game.time` |
+| Announce in chat with a styled card | `ChatMessage.create` with `style`, `flavor`, `content` |
+| Prompt the player before acting | `DialogV2.confirm / prompt / input`, awaitable |
+| Attach a macro to a specific item | `item.setMacro`, `item.executeMacro`; click the item image |
+| Parameterize one macro for many uses | `macro.execute({key: value})`, `/macro Name key=val` |
+| Run a macro as GM / for everyone | Socket-based routing (`socketlib` or core) |
+| Trigger on hooks (session-scoped) | `Hooks.on` inside macro or module |
+| Mass-edit party state | Iterate `game.actors`, `actor.update` batch |
+| Token/status manipulation | `actor.toggleStatusEffect(id)`, `actor.update({statuses})` |
+| Summon / transform tokens | `warpgate.spawnAt / mutate / revert` |
+| GM-side rolls with hidden results | Blind rolls, whisper to GM |
 
-| Capability | Proven by | How |
-|---|---|---|
-| Modify the next attack roll, then vanish | PF2e Aid effects (`removeAfterRoll: true`); PF2e-ranged-combat FakeOut | Set flag/effect, consume in the attack wrapper, clear it |
-| Set state, read it later, clear it | Every charge-analog in the ecosystem | Flag written by macro, read by module hook on the next roll |
-| Reset on kill / round / encounter / dawn | pf2e-ranged-combat, pf2e-bard-helper, osr-helper | `updateActor` HP=0 hook, `combatRound`, `deleteCombat`, `game.time` |
-| Announce in chat with a styled card | pf2e-ranged-combat chat.js, osr-helper | `ChatMessage.create` with `style`, `flavor`, `content` |
-| Prompt the player before acting | DialogV2 (v13+), community macros | `DialogV2.confirm / prompt / input`, awaitable |
-| Attach a macro to a specific item | itemacro (OSE supported natively) | `item.setMacro`, `item.executeMacro`; click the item image |
-| Parameterize one macro for many uses | advanced-macros (core absorbed args in v13) | `macro.execute({key: value})`, `/macro Name key=val` |
-| Run a macro as GM / for everyone | advanced-macros | `runForSpecificUser` flag routing via socketlib |
-| Trigger on hooks (session-scoped) | osr-helper `updateCombat`, Macro Monkey | `Hooks.on` inside macro or module |
-| Mass-edit party state | wfrp4e-gm-toolkit, osr-character-builder | Iterate `game.actors`, `actor.update` batch |
-| Token/status manipulation | Core `toggleStatusEffect`, community status macros | `actor.toggleStatusEffect(id)`, `actor.update({statuses})` |
-| Summon / transform tokens | warpgate, Foundry Summons | `warpgate.spawnAt / mutate / revert` |
-| GM-side rolls with hidden results | Delta Green automation, recall-knowledge | Blind rolls, whisper to GM |
-
-Two honest limits from the research:
+Two honest limits:
 
 - **No reload-proof macro hooks.** A macro cannot install a hook that
   survives F5. If a feature needs persistent interception, the module owns
@@ -70,8 +62,9 @@ Two honest limits from the research:
 
 ## Macro inventory
 
-Macros ship as source files in `scripts/automation/macros/`. Each is a
-copy-paste script macro or (future) a macro compendium pack. The module's
+Macros ship as source files in `scripts/automation/macros/`, and in the
+**Reforged Macros** compendium pack. Each is a
+copy-paste script macro. The module's
 runtime provides the enforcement half via `game.<moduleId>` helpers.
 
 ### Charge Fury (Barbarian) - implemented prototype
