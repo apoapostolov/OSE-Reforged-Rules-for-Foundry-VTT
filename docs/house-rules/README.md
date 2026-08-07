@@ -41,5 +41,5 @@ deliberately not published in this repo:
 
 ## Note on versioning
 
-The module version (e.g. 1.2.0) tracks module releases. The house rules
+The module version (e.g. 14.2.1; MAJOR = Foundry VTT version) tracks module releases. The house rules
 version (1.3.5) tracks rules changes. They are independent.

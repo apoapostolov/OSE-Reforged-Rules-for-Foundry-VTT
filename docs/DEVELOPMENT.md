@@ -15,7 +15,7 @@ change dispatch, sheet extension points, dice pipeline), see
 scripts/
   generate_packs.py        pack source of truth (items, AEs, metadata)
   build_pack.mjs           LevelDB pack builder (consumes the manifest)
-  automation/              runtime layer (v1.2.0+)
+  automation/              runtime layer (v14.2.1+)
     main.js                entry point: settings, prototype patches, hooks
     constants.js           feature name map, finesse list, reroll save map
     helpers.js             feature detection, button builder, usage trackers
@@ -73,7 +73,7 @@ Defined in the META dict of `scripts/generate_packs.py`:
 Counts: 84 items carry real metadata (percentile skills, X-in-6 checks,
 save triggers, result rolls). 255 items total in the pack.
 
-### Layer 3: Runtime automation (v1.2.0, scripts/automation/)
+### Layer 3: Runtime automation (v14.2.1, scripts/automation/)
 
 Feature-detected: an actor's items are scanned for the Reforged ability
 names (constants.js FEATURES map). No configuration needed; the

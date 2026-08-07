@@ -4,13 +4,18 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
 SemVer: MAJOR for breaking changes, MINOR for new features, PATCH for fixes.
 
+Version scheme: the MAJOR matches the minimum Foundry VTT version the module
+targets (13.x for Foundry v13, 14.x for Foundry v14). MINOR and PATCH follow
+standard SemVer meaning. The 1.x line predates this convention; new releases
+use the Foundry-version scheme.
+
 The [Unreleased] section tracks work that has not shipped yet.
 
 ## [Unreleased]
 
 Nothing pending.
 
-## [1.2.1] - 2026-08-07
+## [14.2.1] - 2026-08-07
 
 Final class-feature automation: the last five automatable Reforged
 features now have runtime support, so every automatable class feature in
@@ -129,7 +134,8 @@ Initial release.
 - Generated from the house rules sources; regenerate with
   `scripts/generate_packs.py` + `scripts/build_pack.mjs`.
 
-[Unreleased]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/compare/v14.2.1...HEAD
+[14.2.1]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/compare/v1.2.0...v14.2.1
 [1.2.0]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/releases/tag/v1.0.0

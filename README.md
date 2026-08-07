@@ -2,7 +2,7 @@
 
 [![Foundry VTT v14](https://img.shields.io/badge/Foundry%20VTT-v14-green)](https://foundryvtt.com/)
 [![OSE System](https://img.shields.io/badge/OSE-2.3.0%2B-blue)](https://foundryvtt.com/packages/ose)
-[![Module Version](https://img.shields.io/badge/version-1.2.1-blue)](./module.json)
+[![Module Version](https://img.shields.io/badge/version-14.2.1-blue)](./module.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 Play-ready Reforged class features for Old-School Essentials: a compendium
@@ -51,7 +51,7 @@ Four layers, in the order they appear on your sheet:
 | --- | --- | --- |
 | 🪄 Active Effects (4) | Permanent bonuses that apply the moment the item is on your sheet | Stats change: saves, attack mods, initiative |
 | 🎲 Roll metadata (84 items) | Every dice-mechanic ability rolls correctly from the sheet | Dice icon on the ability; blind rolls stay hidden |
-| 🔘 Runtime buttons (v1.2.1+) | Chat-card buttons, roll bonuses, and toggles for features that need a decision | Buttons on attack/save cards; toggle row in the sheet header |
+| 🔘 Runtime buttons (v14.2.1+) | Chat-card buttons, roll bonuses, and toggles for features that need a decision | Buttons on attack/save cards; toggle row in the sheet header |
 | 🎯 Macro automation (9 effects, 7 macros) | Player- and GM-triggered effects: click a macro to declare a charge, mark an enemy unaware, swear an oath, or tag a creature as Evil, and the module applies the effect on your next roll | Macros in the **Reforged Macros** compendium pack (drag to hotbar); results appear on your attack cards and in chat |
 
 Every button has an emoji and a hover tooltip that quotes the rule text, so
