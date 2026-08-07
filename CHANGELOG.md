@@ -1,78 +1,98 @@
-# CHANGELOG
+# Changelog
 
-## 1.2.0 - 2026-08-07
+All notable changes to this project are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow
+SemVer: MAJOR for breaking changes, MINOR for new features, PATCH for fixes.
 
-Docs: user-oriented README automation guide + house rules source published.
+The [Unreleased] section tracks work that has not shipped yet.
 
-- README now lists **every automated effect per class** in tables with
-  plain-language explanations and step-by-step trigger instructions
-  (newbie-friendly: legend for the automation badges, per-class tables from
-  Basic to New classes).
-- Published the full Reforged house rules set under
-  `docs/house-rules/` (OSE_HOUSE_RULES.md v1.3.5, OSE_NEW_CONTENT.md,
-  CHANGELOG.md, TORCH_REALISM_SLAVIC.md, D&D_DESCRIPTORS.md). Internal
-  management and statblock-importer docs are not published. The official
-  OSE Player's Tome text is excluded (copyright).
-- Notion links in OSE_HOUSE_RULES.md converted to local anchors; private
-  Notion-hosted image replaced with a note.
+## [Unreleased]
 
-Tier 1 automation layer: chat-card buttons, roll bonuses, and sheet toggles
-for Reforged class features. Every button has an emoji/glyph and a hover
-tooltip explaining the rule it applies.
+Nothing pending.
 
-- **Chat-card option buttons** (injected into OSE cards with native styling):
-  - ⚔️ **Cleave** (Fighter): extra melee attack on successful hits.
-  - 🤸 **Dodge Die** (Acrobat): roll the dodge die (d4/d6/d8/d10 by level)
-    against an incoming attack, once per round.
-  - 🍀 **Lucky** (Halfling), ⛰️ **Stout Fortune** (Dwarf), 🛡️ **Iron Will**
-    (Duergar), 💨 **Acrobat Evasion**: once-per-day rerolls on failed saves,
-    restricted to the save categories each feature covers.
-- **Roll pipeline bonuses** (applied automatically at the source):
-  - 🗿 **Attack Giant Foes** (Dwarf): +2 attack vs giants.
-  - 💥 **Harm Giant Foes** (Duergar): +2 damage vs giants.
-  - 🛡️ **Damage Reduction** (Barbarian): DR 1 (2 at 9th), min 1 damage.
-  - 🎯 **Precise Strikes** (Sage): INT modifier to attack and damage.
-  - 🤺 **Finesse** (Drow/Elf/Half-Elf): DEX instead of STR on melee.
-- **Sheet header toggles** (with rule tooltips):
-  - 🏃 **Fleet in Terrain** (Ranger), ⚖️ **Faith's Influence** (Cleric),
-    🛡️ **Shield Stand** (Knight).
-- **💤 Sleep/Paralysis Immunity** (Drow/Elf/Half-Elf): blocks sleep and
-  paralysis statuses from being applied.
-- 💀 **Grim Tenacity** (Half-Orc): save vs Death button on 0-hp cards.
-- Giant detection: monster name pattern (giant/ogre/troll/ettin) or HD >= 8.
-- Automation can be disabled in module settings (`automationEnabled`).
+## [1.2.0] - 2026-08-07
 
-## 1.1.0 - 2026-08-07
+Tier 1 automation for Reforged class features, plus the user documentation
+and the full house rules source.
 
-Automation layer: Active Effects + roll/save metadata.
+### Added (for players)
 
-- **4 Active Effects** that apply automatically when the item is placed on a
+- Chat-card option buttons with emoji and hover tooltips that quote the
+  rule text:
+  - ⚔️ Cleave (Fighter): extra melee attack on a successful hit.
+  - 🤸 Dodge Die (Acrobat): d4/d6/d8/d10 AC against an incoming attack,
+    once per round.
+  - Rerolls for failed saves: 🍀 Lucky (Halfling), ⛰️ Stout Fortune
+    (Dwarf), 🛡️ Iron Will (Duergar), 💨 Acrobat Evasion (Acrobat). Each
+    once per day, restricted to the save categories the feature covers.
+- Automatic roll bonuses, applied to the roll formula at the source:
+  - 🗿 Attack Giant Foes (Dwarf): +2 to attack giants.
+  - 💥 Harm Giant Foes (Duergar): +2 to damage giants.
+  - 🎯 Precise Strikes (Sage): INT modifier to attack and damage.
+  - 🤺 Finesse (Drow/Elf/Half-Elf): DEX instead of STR on melee.
+  - 🛡️ Underfoot Defense (Halfling): large foes take -1 to hit you.
+  - 🛡️ Damage Reduction (Barbarian): DR 1 (2 at 9th level), minimum 1
+    damage.
+- Sheet header toggles and rolls: 🏃 Fleet in Terrain (Ranger), ⚖️ Faith's
+  Influence (Cleric), 🛡️ Shield Stand (Knight), 👁️ Battle Senses
+  (Barbarian).
+- 💤 Sleep/Paralysis Immunity (Drow/Elf/Half-Elf): the module blocks sleep
+  and paralysis statuses from being applied.
+- 💀 Grim Tenacity (Half-Orc): a save-vs-Death card appears when you drop
+  to 0 HP.
+- A module setting (`Reforged Tier 1 Automation`) turns the whole runtime
+  layer off.
+
+### Added (documentation)
+
+- Per-class automation guide for players: every automated effect, what the
+  rule does, how to trigger it ([docs/AUTOMATION.md](docs/AUTOMATION.md)).
+- Developer documentation: what is implemented, the architecture, and the
+  Tier 2+ roadmap ([docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)).
+- The full Reforged house rules set under `docs/house-rules/` (rules,
+  Sage class, rules changelog, optional lighting subsystem, ability score
+  descriptions).
+- Internal management and statblock-importer documents are not published,
+  and the official OSE Player's Tome text is excluded for copyright.
+
+## [1.1.0] - 2026-08-07
+
+First automation layer: Active Effects and roll/save metadata.
+
+### Added
+
+- 4 Active Effects that apply automatically when the item is placed on a
   character:
-  - Halfling **Stout Heart**: +2 to spell saves (charm/dominate/possess/compel).
-  - Halfling **Missile Attack Bonus**: +1 to missile attack rolls (was a
-    manual Tweaks entry in the official module, now automatic).
+  - Halfling **Stout Heart**: +2 to spell saves.
+  - Halfling **Missile Attack Bonus**: +1 to missile attack rolls.
   - Halfling **Initiative Bonus**: +1 to initiative (optional rule).
   - Svirfneblin **Illusion Resistance**: +2 to spell saves vs illusions.
-- **Roll/save metadata on 84 items** following the official OSE module's
-  pattern: every dice-mechanic ability (X-in-6 checks, Thief/Acrobat/
-  Barbarian/Assassin percentile skills, Sage skills, save triggers) is now
-  rollable directly from the character sheet, with blind rolls for secret
-  GM checks.
-- House-rule level 1 values applied to reworked percentile skills
-  (Open Locks 10%, Climb 25%, Acrobat CS 40%, TW 40%, etc.).
+- Roll/save metadata on 84 items, following the official OSE module's
+  pattern. Every dice-mechanic ability (X-in-6 checks, Thief and other
+  percentile skills, Sage skills, save triggers) is rollable directly from
+  the character sheet. Secret GM checks are blind rolls.
+- House-rule level 1 values on reworked percentile skills (Open Locks 10%,
+  Climb 25%, Acrobat CS 40%, Tightrope 40%, and so on).
 - Full automation documentation in `docs/AUTOMATION.md`.
 
-## 1.0.0 - 2026-08-07
+## [1.0.0] - 2026-08-07
 
 Initial release.
 
-- **Reforged Class Features** compendium with 255 items across 23 classes
+### Added
+
+- **Reforged Class Features** compendium: 255 items across 23 classes
   (Basic: 4, Demihuman: 9, Advanced: 9, New: 1 Sage).
-- Each class folder mixes standard (unmodified) OSE abilities, APO-modified
-  abilities, and new APO abilities, each tagged with
+- Each class folder mixes standard (unmodified) OSE abilities,
+  APO-modified abilities, and new APO abilities, tagged with
   `flags.ose-apo-reforged-rules.origin`.
-- Sage class authored from OSE_NEW_CONTENT.md (Precise Strikes, Sage Skills,
-  Broad Knowledge, Erudite Sense, Keen Observation, Medical Prowess, Research,
-  Workshop, Savant).
-- Generated from the houserules sources: regenerate with
+- Sage class authored from `OSE_NEW_CONTENT.md` (Precise Strikes, Sage
+  Skills, Broad Knowledge, Erudite Sense, Keen Observation, Medical
+  Prowess, Research, Workshop, Savant).
+- Generated from the house rules sources; regenerate with
   `scripts/generate_packs.py` + `scripts/build_pack.mjs`.
+
+[Unreleased]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/releases/tag/v1.0.0

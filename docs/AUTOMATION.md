@@ -1,442 +1,299 @@
-# OSE Reforged Rules - Automation Documentation
+# OSE Reforged Rules - Automation Guide
 
-This document explains every piece of automation in the Reforged Class
-Features compendium: what is automated, how it works, what you see when you
-use it, and where it affects the OSE system.
+This guide explains what this module automates, how to trigger each
+automation, and what you will see. It is written for players and GMs who
+use the module, not for developers. If you maintain the module or want to
+extend it, see [DEVELOPMENT.md](DEVELOPMENT.md) instead.
 
-It is written for two audiences:
+## How automation works
 
-- **Players and GMs** who use the module and want to know what happens when
-  they drag an ability onto a character.
-- **Developers and AI agents** who maintain the module and need the technical
-  details (data paths, schemas, regeneration rules).
+The Reforged abilities on your character sheet come in three automation
+layers. They stack, and you do not configure any of them: drag the ability
+onto your sheet and the automation is active.
 
-Version covered: **1.1.0** (2026-08-07).
+| Layer | What it does | Where you see it |
+| --- | --- | --- |
+| 🪄 Active Effect | Applies a permanent bonus the moment the item is on your sheet. Nothing to click. | The affected stat changes (saves, attack bonus, initiative). |
+| 🎲 Rollable | The ability rolls dice from the sheet. | Click the dice icon on the ability in your Abilities tab. |
+| 🔘 Chat Button | A button appears on a chat card when the situation happens. Click it to roll. | The card in the chat log, exactly when you need it. |
+| 🎚️ Toggle | A button in the header of your character sheet. Click to turn on or off. | Your sheet header, under the name. |
+| ⚔️ Roll Bonus | Added to your attack or damage roll automatically. | The roll formula in the chat card shows the bonus. |
+| 💤 Status Block | Prevents a status (sleep, paralysis) from being applied to you. | Nothing appears unless the effect is blocked; then a notice card explains it. |
+| 🛡️ Save Trigger | The ability rolls a saving throw when you use it. | Click the dice icon on the ability to roll the save. |
 
-For the full Foundry v14 + OSE system API research (hooks catalog, chat
-message injection, sheet extension points, damage/save/attack pipeline,
-and the feature-by-feature automation map), see
-**[FULL_AUTOMATION_BLUEPRINT.md](FULL_AUTOMATION_BLUEPRINT.md)**.
+Two rules of thumb:
 
----
+- **Every button has an emoji and a hover tooltip.** Hover over any button
+  and the tooltip quotes the exact rule text, so you never have to guess
+  what the button does.
+- **Blind rolls stay blind.** Abilities marked for secret GM checks roll
+  privately. Players see the result only when the GM shares it.
 
-## 1. Design Philosophy
+## What is automated, per class
 
-The official OSE Advanced Fantasy module ships **zero Active Effects**. All of
-its 240 items are descriptive text plus roll metadata. When a passive bonus
-exists (for example the Halfling's +1 missile attack), the official module
-tells the player to click the Tweaks button and type the number in by hand.
+Features without automation are descriptive only: the full rule text is in
+[docs/house-rules/OSE_HOUSE_RULES.md](house-rules/OSE_HOUSE_RULES.md) and
+the GM applies them by hand.
 
-This module follows the same base pattern, then goes one step further:
+### Basic Classes
 
-- **Roll and save metadata** is assigned exactly like the official module.
-  Any ability with a dice mechanic (X-in-6, percentile, or a triggered save)
-  carries the metadata the OSE system needs to roll it from the sheet.
-- **Active Effects** are added only where the OSE data model can express a
-  passive numeric bonus honestly. Four abilities qualify. Everything else is
-  conditional or event-driven and would be wrong as an always-on effect.
+#### Cleric
 
-Why so few AEs? The OSE actor data model exposes a small set of numeric
-fields: saves, attack modifiers, AC modifiers, movement, initiative, ability
-scores. Features like "extra attack on a kill" or "+2 vs giants" cannot be
-expressed as static value changes. Encoding them as always-on AEs would
-create wrong rules. They stay descriptive, exactly as the official module
-treats the same kind of feature.
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| ⚖️ Faith's Influence | +1 on Reaction checks and Wisdom/Charisma checks when the target recognizes your religion. | Toggle on in your sheet header while negotiating. The +1 applies automatically to your WIS and CHA checks. |
+| 🎲 Cure Disease (Ritual) | 1-in-6 ritual chance to cure a disease. | Click the dice icon on the ability. 1-4 succeeds. |
 
----
+#### Fighter
 
-## 2. Active Effects Implemented
-
-Four items carry an embedded Active Effect with `transfer: true`. When the
-item is placed on an actor (dragged from the compendium), the effect
-transfers to the actor and applies. The change is active immediately; there
-is no toggle step.
-
-All changes use Foundry v14 schema: `system.changes[]` with
-`{key, type: "add", value, phase: "initial"}`. The `initial` phase is what
-feeds into OSE's derived data (saves, AC, movement are recalculated after
-the initial phase runs).
-
-### 2.1 Stout Heart (Halfling, new feature)
-
-| Field | Value |
-|---|---|
-| Change key | `system.saves.spell.value` |
-| Change type | `add` |
-| Change value | `-2` |
-| Transfer | `true` |
-| Disabled | `false` |
-
-**What the rule says:** +2 to saving throws versus magical effects that
-charm, dominate, possess, or compel action against the Halfling's nature.
-Stacks with racial save bonuses.
-
-**How it works:** OSE saves are target numbers. You roll 1d20 and must roll
-at or above the target. A bonus to saves lowers the target. Adding `-2` to
-the spell save value is a +2 save bonus. Charm, dominate, possess, and
-compel effects are spell saves in OSE, so the whole category is the correct
-target.
-
-**What the player sees:** On the character sheet, the Spell save value is 2
-lower than the class baseline. For example, a Halfling with a base spell
-save of 13 shows 11.
-
-**What the GM sees:** The same lower value on the actor sheet. When the
-Halfling rolls a save versus a charm or domination effect, the system rolls
-against the lowered target automatically.
-
-**Where it affects functionality:** The character sheet Saves section and
-every save roll versus spells (`rollSave` reads `system.saves.spell.value`).
-
-### 2.2 Missile Attack Bonus (Halfling, official item automated)
-
-| Field | Value |
-|---|---|
-| Change key | `system.thac0.mod.missile` |
-| Change type | `add` |
-| Change value | `1` |
-| Transfer | `true` |
-| Disabled | `false` |
-
-**What the rule says:** +1 to attack rolls with all missile weapons.
-
-**How it works:** OSE attack rolls for missile weapons add the missile
-attack modifier to the d20 result. The official module tells the player to
-enter 1 into the Missile Bonus field through Tweaks. This AE does that
-automatically.
-
-**What the player sees:** Missile attack rolls include an extra +1. The
-attack card shows the modifier in the roll breakdown.
-
-**What the GM sees:** The same +1 on the Halfling's missile attack rolls.
-
-**Where it affects functionality:** Every missile attack roll
-(`rollAttack` with type `missile` adds `system.thac0.mod.missile`).
-
-### 2.3 Initiative Bonus (Halfling, official optional-rule item automated)
-
-| Field | Value |
-|---|---|
-| Change key | `system.initiative.mod` |
-| Change type | `add` |
-| Change value | `1` |
-| Transfer | `true` |
-| Disabled | `false` |
-
-**What the rule says:** +1 to initiative rolls (optional individual
-initiative rule).
-
-**How it works:** The OSE initiative value is the sum of the initiative
-value, the initiative modifier, and the Dexterity initiative bonus. Adding 1
-to the modifier shifts initiative by +1.
-
-**What the player sees:** +1 appears in the initiative value on the combat
-tracker.
-
-**What the GM sees:** The same +1 when combat order is rolled.
-
-**Where it affects functionality:** Combat tracker initiative (`get init()`
-reads `system.initiative.mod`).
-
-### 2.4 Illusion Resistance (Svirfneblin, official item automated)
-
-| Field | Value |
-|---|---|
-| Change key | `system.saves.spell.value` |
-| Change type | `add` |
-| Change value | `-2` |
-| Transfer | `true` |
-| Disabled | `false` |
-
-**What the rule says:** +2 bonus to all saving throws against illusions.
-
-**How it works:** Same mechanism as Stout Heart. Illusion saves are spell
-saves in OSE, so the spell save target drops by 2.
-
-**What the player sees:** The Spell save value is 2 lower than the class
-baseline.
-
-**What the GM sees:** The same lowered value on the actor sheet.
-
-**Where it affects functionality:** Character sheet Saves section and all
-save rolls versus spells.
-
----
-
-## 3. Roll and Save Metadata
-
-84 items carry OSE roll metadata. This is the same mechanism the official
-module uses. It makes the ability rollable from the character sheet and
-shows the correct tags.
-
-### 3.1 The metadata fields
-
-| Field | Meaning |
-|---|---|
-| `roll` | The dice formula, for example `1d6`, `1d100`, `1d3` |
-| `rollType` | How success is judged: `below`, `above`, or `result` |
-| `rollTarget` | The target number for `below` / `above` rolls |
-| `blindroll` | `true` means the roll is secret (GM-only result) |
-| `save` | The save category the ability triggers: `death`, `wand`, `paralysis`, `breath`, `spell` |
-
-**What the player sees:** Ability names become clickable when they have a
-roll formula. Clicking rolls the dice and shows the result versus the
-target. The item summary shows auto-generated tags: `Roll 1d6 ≤ 4`, `Save:
-Spell`, and so on.
-
-**What the GM sees:** For `blindroll` abilities (secret checks like
-listening, hiding, or detecting), the roll is made in secret and only the
-GM sees the result. Save tags show the skull icon.
-
-**What the player does not see:** The underlying metadata. It is invisible
-until the ability is used.
-
-### 3.2 House-rule values assigned
-
-The Reforged rules rework the Thief skill progression and related
-percentile skills. The roll targets reflect the house-rule level 1 values:
-
-| Item | Roll | Target | Blind |
-|---|---|---|---|
-| Open Locks (OL) | 1d100 below | 10 | no |
-| Climb sheer surfaces (CS) | 1d100 below | 25 | no |
-| Hear noise (HN) | 1d6 below | 1 | yes |
-| Hide In Shadows (HS) | 1d100 below | 10 | yes |
-| Move silently (MS) | 1d100 below | 10 | yes |
-| Pick Pockets (PP) | 1d100 below | 10 | no |
-| Find/remove treasure traps (TR) | 1d100 below | 10 | yes |
-| Acrobat CS | 1d100 below | 40 | no |
-| Acrobat TW | 1d100 below | 40 | yes |
-| Acrobat FA | 1d100 below | 25 | no |
-| Barbarian CS | 1d100 below | 25 | no |
-| Assassin CS | 1d100 below | 25 | no |
-
-### 3.3 X-in-6 checks on new features
-
-| Item | Roll | Target | Blind |
-|---|---|---|---|
-| Cure Disease (Ritual) | 1d6 below | 4 | no |
-| Terrain Hiding (Gnome) | 1d6 below | 4 | yes |
-| Terrain Hiding (Halfling) | 1d6 below | 5 | yes |
-| See Through Pretense | 1d6 below | 1 | yes |
-| Stone Camouflage | 1d6 below | 4 | yes |
-| Bardic Knowledge | 1d6 below | 1 | yes |
-| Antivenom Craft | 1d6 below | 5 | no |
-| Minor Conjurations | 1d6 below | 3 | yes |
-| Clean of Body | 1d6 below | 2 | no |
-
-### 3.4 Simple result rolls
-
-| Item | Roll |
-|---|---|
-| Poisoncraft (Spiders) | 1d3 |
-| Brutal Grapple | 1d4 |
-| Herbal Salves | 1d3 |
-
-### 3.5 Save triggers
-
-| Item | Save |
-|---|---|
-| Assassination (AS) | death |
-| Grim Tenacity | death |
-| Battle Senses | death |
-| Enemy Slayer | death |
-| Stunning Flourish | spell |
-| Sure-Footed | breath |
-
-### 3.6 Sage percentile skills
-
-The Sage uses a Thief-style percentile progression. The items carry the
-level 1 base values:
-
-| Item | Roll | Target | Blind |
-|---|---|---|---|
-| Sage Skills | 1d100 below | 25 | no |
-| Erudite Sense | 1d100 below | 25 | yes |
-| Keen Observation | 1d100 below | 20 | no |
-| Medical Prowess | 1d100 below | 20 | no |
-| Research (Downtime) | 1d100 below | 25 | yes |
-| Workshop (Downtime) | 1d100 below | 10 | no |
-
----
-
-## 4. What Is Not Automated and Why
-
-These features look automatable but cannot be expressed as honest always-on
-Active Effects in the OSE system. They are descriptive text only:
-
-| Feature | Why it is not an AE |
-|---|---|
-| Fighter Cleave | Extra attack on kill. Needs a combat event hook, not a stat change. |
-| Acrobat Dodge Die | Reactive AC bump on being hit. Needs damage-roll interception. |
-| Rerolls (Lucky, Stout Fortune, Iron Will) | Once-per-day reroll of a failed roll. Needs a macro and resource tracking. |
-| Paladin Smite Evil | Triggers on natural 19/20. Needs an attack-result hook. |
-| Dwarf/Duergar giant-foe bonuses | "+2 vs giants" is conditional on the target. OSE AEs cannot filter by target. |
-| Barbarian Damage Reduction | OSE has no damage-reduction field in the data model. |
-| Sleep/Paralysis Immunity | OSE has no immunity/status system. |
-| Finesse variants (Dex for Str) | OSE weapons have no per-weapon ability substitution. |
-| Half-Orc Grim Tenacity (the 0 hp part) | Save to stay conscious at 0 hp. Needs an HP-zero hook. |
-| Ranger favored-terrain speed | Conditional on terrain. Toggling needs an effects UI OSE does not render. |
-
-If these are wanted as real automation, they need macros or a companion
-combat module. The roll/save metadata on several of them (Grim Tenacity,
-Battle Senses, Stunning Flourish) already gives the GM the correct dice
-roll from the sheet.
-
----
-
-## 5. Technical Reference
-
-### 5.1 Active Effect schema (Foundry v14)
-
-```json
-{
-  "name": "Stout Heart",
-  "type": "base",
-  "img": "icons/svg/aura.svg",
-  "system": {
-    "changes": [
-      {
-        "key": "system.saves.spell.value",
-        "type": "add",
-        "value": "-2",
-        "phase": "initial",
-        "priority": null
-      }
-    ]
-  },
-  "disabled": false,
-  "transfer": true,
-  "duration": { "value": null, "units": "seconds", "expiry": null, "expired": false },
-  "statuses": [],
-  "flags": {}
-}
-```
-
-Notes:
-
-- `phase: "initial"` is required. OSE's derived data (saves, AC, movement)
-  is computed after the initial phase. A `final` phase change would be
-  overwritten for derived fields.
-- `transfer: true` is required for the effect to apply when the item is on
-  an actor. OSE does not override core AE application, so the transfer
-  works out of the box.
-- The OSE sheet has no Effects tab. Effects are invisible in the UI but
-  their value changes appear in the affected stats (saves, initiative,
-  attack modifiers). This is why disabled/toggle AEs are avoided: there is
-  no UI to toggle them.
-
-### 5.2 OSE data paths used
-
-| Path | What it changes |
-|---|---|
-| `system.saves.spell.value` | Spell save target (lower is better) |
-| `system.thac0.mod.missile` | Missile attack modifier |
-| `system.initiative.mod` | Initiative modifier |
-
-### 5.3 Verifying an AE is applied
-
-1. Drag the ability onto an actor.
-2. Open the actor sheet.
-3. Check the affected stat: Spell save 2 lower, missile bonus +1, or
-   initiative +1.
-4. For save bonuses, roll a save versus spells and confirm the target.
-
----
-
-## 6. Regeneration
-
-The packs are generated, never hand-edited. To change an effect or
-metadata:
-
-1. Edit `scripts/generate_packs.py`:
-   - `AES` dict for active effects (keyed by class and item name).
-   - `META` dict for roll/save metadata.
-2. Run `python3 scripts/generate_packs.py` to write the manifest.
-3. Run `node scripts/build_pack.mjs packs/reforged-class-features` to
-   rebuild the LevelDB pack.
-4. Verify counts: 255 items, 4 with AEs, 84 with roll/save metadata.
-5. Bump the version per Apo's rule: PATCH for fixes, MINOR for new
-   features.
-
----
-
-## 7. Summary
-
-| Layer | Count | What it does |
+| Feature | What the rule does | How to use it |
 |---|---|---|
-| Active Effects | 4 | Passive numeric bonuses applied on item placement |
-| Roll metadata | 84 | Rollable abilities with correct targets and blind rolls |
-| Save metadata | 6 | Abilities that trigger a save roll |
-| Descriptive only | rest | Conditional or event-driven features |
+| ⚔️ Cleave | After killing an enemy with a melee attack, you may make one extra melee attack (2 at 5th, 3 at 9th, 4 at 13th). | On a successful melee hit card, click the Cleave button when the target drops to 0 HP. It rolls a new melee attack. |
 
----
+#### Magic-User
 
-## 8. Tier 1 runtime automation (v1.2.0+)
+No automated effects. The class abilities are descriptive only; the GM
+adjudicates them by hand.
 
-The module ships a runtime layer in `scripts/automation/` (1,346 lines) that
-implements the Tier 1 features from the full automation blueprint. It is
-feature-detected: drag the Reforged ability onto a character and the
-automation activates. Disable everything with the `Reforged Tier 1
-Automation` module setting (`automationEnabled`).
+#### Thief
 
-### 8.1 Chat-card option buttons
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🎲 Open Locks (OL) | 1d100 under your chance to pick a lock. | Click the dice icon on the ability. Roll is below your OL percentage. |
+| 🎲 Find/remove treasure traps (TR) | 1d100 under your chance to find and remove a treasure trap. | Click the dice icon. Secret roll for the GM (blind). |
+| 🎲 Climb sheer surfaces (CS) | 1d100 under your chance to climb. | Click the dice icon on the ability. |
+| 🎲 Hide In Shadows (HS) | 1d100 under your chance to hide in shadows. | Click the dice icon. Blind roll. |
+| 🎲 Move silently (MS) | 1d100 under your chance to move silently. | Click the dice icon. Blind roll. |
+| 🎲 Pick Pockets (PP) | 1d100 under your chance to pick a pocket. | Click the dice icon on the ability. |
+| 🎲 Hear noise (HN) | 1-in-6 chance to hear noise through a door. | Click the dice icon. Blind roll. |
+| 🎲 Read Languages | 1d100 under your chance to read unknown languages. | Click the dice icon. |
+| 🎲 Scroll Use | 1d100 over 11 to cast from a scroll. | Click the dice icon. Roll is above 11. |
+| 🎲 After Reaching 9th Level | 2d6 retainers and a guild when you reach 9th level. | Click the dice icon when you level up. |
 
-Injected via `renderChatMessageHTML` into OSE cards. Every button has an
-emoji/glyph before its label and a `data-rf-tooltip` hover bubble quoting
-the rule text. Buttons live in a `.rf-card-buttons` container (NOT
-`.card-buttons`, so OSE's own delegated handler does not hijack them).
+### Demihuman Classes
 
-| Button | Feature | Behavior |
+#### Drow
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 💤 Immunity to Sleep and Paralysis | Sleep and paralysis spells and effects never affect you. | Automatic. If something tries to apply sleep or paralysis, the module blocks it and posts a notice. |
+| 🎲 Detect Secret Doors | 2-in-6 chance to spot secret doors. | Click the dice icon. Blind roll for the GM. |
+| 🎲 Listening at Doors | 2-in-6 chance to hear noise through a door. | Click the dice icon. Blind roll. |
+| 🤺 Dex Finesse (Drow arms) | Use DEX instead of STR for attack and damage with drow-made weapons. | Automatic when you attack with a drow-made weapon. The roll formula shows your DEX bonus. |
+| 🎲 Poisoncraft (Spiders) | Brew spider poison, 1d3 doses. | Click the dice icon to roll the number of doses. |
+
+#### Dwarf
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| ⛰️ Stout Fortune | Once per day, reroll a failed save vs Death/Poison, Paralysis/Petrify, or Spells (not Rods/Wands/Staves). | When one of those saves fails in chat, click the Reroll button on the card. Once per day. |
+| 🗿 Attack Giant Foes | +2 to attack rolls against giants and creatures larger than human-sized. | Automatic when you attack a giant (name or 8+ HD). The attack roll formula includes +2. |
+| 🎲 Detect Construction Tricks | 2-in-6 chance to find new construction, sliding walls, traps. | Click the dice icon. Blind roll. |
+| 🎲 Detect Room Traps | 2-in-6 chance to spot room traps. | Click the dice icon. Blind roll. |
+| 🎲 Listening at Doors | 2-in-6 chance to hear noise through a door. | Click the dice icon. Blind roll. |
+
+#### Duergar
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🛡️ Iron Will | Once per day, reroll a failed save vs Poison or Spells. | When one of those saves fails in chat, click the Reroll button on the card. Once per day. |
+| 💥 Harm Giant Foes | +2 to damage rolls against giants and creatures larger than human-sized. | Automatic when you hit a giant. The damage formula includes +2. |
+| 🎲 Detect Construction Tricks | 2-in-6 chance to find new construction, sliding walls, traps. | Click the dice icon. Blind roll. |
+| 🎲 Detect Room Traps | 2-in-6 chance to spot room traps. | Click the dice icon. Blind roll. |
+| 🎲 Listening at Doors | 2-in-6 chance to hear noise through a door. | Click the dice icon. Blind roll. |
+| 🎲 Stealth | 3-in-6 chance to move stealthily. | Click the dice icon. Blind roll. |
+
+#### Elf
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 💤 Immunity to Sleep and Paralysis | Sleep and paralysis spells and effects never affect you. | Automatic. The module blocks sleep/paralysis and posts a notice. |
+| 🎲 Detect Secrets | 2-in-6 chance to detect hidden doors. | Click the dice icon. Blind roll. |
+| 🎲 Listening at Doors | 2-in-6 chance to hear noise through a door. | Click the dice icon. Blind roll. |
+| 🤺 Elven Finesse | Use DEX instead of STR for attack and damage with elven-made weapons. | Automatic when you attack with an elven-made weapon. |
+
+#### Gnome
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🎲 Terrain Hiding | 4-in-6 chance to hide in natural terrain. | Click the dice icon. Blind roll. |
+| 🎲 Detect Construction Tricks | 2-in-6 chance to find new construction, sliding walls, traps. | Click the dice icon. Blind roll. |
+| 🎲 Hiding In Dungeons | 2-in-6 chance to hide in dungeon surroundings. | Click the dice icon. Blind roll. |
+| 🎲 Hiding in Woods/Undergrowth | 90% chance to hide in woods. | Click the dice icon. Blind roll. |
+| 🎲 Listening at Doors | 2-in-6 chance to hear noise through a door. | Click the dice icon. Blind roll. |
+
+#### Half-Elf
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 💤 Immunity to Sleep and Paralysis | Sleep and paralysis spells and effects never affect you. | Automatic. The module blocks sleep/paralysis and posts a notice. |
+| 🤺 Mixed Finesse | Use DEX instead of STR for attack and damage with elven or human weapons you choose. | Automatic when you attack with a finesse-tagged weapon. |
+| 🎲 See Through Pretense | 1-in-6 chance to see through disguise or pretense. | Click the dice icon. Blind roll. |
+
+#### Half-Orc
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 💀 Grim Tenacity | When reduced to 0 HP, save vs Death to stay conscious until the end of the next round or -10 HP. | When your HP hits 0, a chat card appears with the save button. Click it. Once per day. |
+| 🎲 Hide in shadows (HS) | 1d100 under your chance to hide in shadows. | Click the dice icon. Blind roll. |
+| 🎲 Move Silently (MS) | 1d100 under your chance to move silently. | Click the dice icon. Blind roll. |
+| 🎲 Pick pockets (PP) | 1d100 under your chance to pick a pocket. | Click the dice icon. |
+| 🎲 Brutal Grapple | Grapple deals 1d4 damage. | Click the dice icon to roll the damage. |
+
+#### Halfling
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🪄 Stout Heart | +2 to spell saving throws. | Automatic as soon as the item is on your sheet. Nothing to click. |
+| 🪄 Missile Attack Bonus | +1 to missile attack rolls. | Automatic. Your missile attack formula includes +1. |
+| 🪄 Initiative Bonus | +1 to initiative rolls. | Automatic. Your initiative roll includes +1. |
+| 🍀 Lucky | Once per day, reroll a failed save of any category. | When any save fails in chat, click the Reroll button on the card. Once per day. |
+| 🛡️ Underfoot Defense | Creatures larger than human-sized take -1 to hit you in melee. | Automatic. A large attacker's roll formula includes -1 when targeting you. |
+| 🎲 Terrain Hiding | 5-in-6 chance to hide in natural terrain. | Click the dice icon. Blind roll. |
+| 🎲 Hiding In Dungeons | 2-in-6 chance to hide in dungeon surroundings. | Click the dice icon. Blind roll. |
+| 🎲 Hiding in Woods/Undergrowth | 90% chance to hide in woods. | Click the dice icon. Blind roll. |
+| 🎲 Listening at Doors | 2-in-6 chance to hear noise through a door. | Click the dice icon. Blind roll. |
+
+#### Svirfneblin
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🪄 Illusion Resistance | +2 to spell saving throws. | Automatic as soon as the item is on your sheet. |
+| 🎲 Blend into Stone | 4-in-6 (gloomy) or 2-in-6 (well-lit) chance to blend into stone. | Click the dice icon on the matching ability. Blind roll. |
+| 🎲 Stone Murmurs | 2-in-6 chance to hear stone speak. | Click the dice icon. Blind roll. |
+| 🎲 Stone Camouflage | 4-in-6 chance to hide in stone surroundings. | Click the dice icon. Blind roll. |
+| 🎲 Detect Construction Tricks | 2-in-6 chance to find new construction, sliding walls, traps. | Click the dice icon. Blind roll. |
+| 🛡️ Sure-Footed | Save vs Breath when exposed to effects that move or topple you. | Click the dice icon on the ability to roll the Breath save. |
+
+### Advanced Classes
+
+#### Acrobat
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🤸 Dodge Die | Once per round, when you would take damage from an attack, roll a d4 (d6 at 5th, d8 at 9th, d10 at 13th) and add it to your AC. If your AC then exceeds the attack roll, the attack still hits but deals only 1 damage. | When you are the target of an attack card, click the Dodge button before damage is applied. Once per round. |
+| 💨 Acrobat Evasion | Once per day, reroll a failed save vs Breath or Spells. | When one of those saves fails in chat, click the Reroll button. Once per day. |
+| 🎲 Climb sheer surfaces (CS) | 1d100 under your chance to climb. | Click the dice icon. |
+| 🎲 Falling (FA) | 1d100 under your chance to fall without injury. | Click the dice icon. |
+| 🎲 Hide in shadows (HS) | 1d100 under your chance to hide in shadows. | Click the dice icon. Blind roll. |
+| 🎲 Move Silently (MS) | 1d100 under your chance to move silently. | Click the dice icon. Blind roll. |
+| 🎲 Tightrope Walking (TW) | 1d100 under your chance to walk a tightrope. | Click the dice icon. Blind roll. |
+| 🎲 Tumbling Strike | 25% chance to perform a tumbling strike. | Click the dice icon. |
+
+#### Assassin
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🛡️ Assassination (AS) | When you assassinate, the target saves vs Death or dies. | Click the dice icon on the ability to roll the target's Death save. |
+| 🎲 Disguise | 1d100 over 3 to keep a disguise. | Click the dice icon. Blind roll. |
+| 🎲 Hear noise (HN) | 1-in-6 chance to hear noise through a door. | Click the dice icon. Blind roll. |
+| 🎲 Hide in shadows (HS) | 1d100 under your chance to hide in shadows. | Click the dice icon. Blind roll. |
+| 🎲 Move Silently (MS) | 1d100 under your chance to move silently. | Click the dice icon. Blind roll. |
+| 🎲 Climb sheer surfaces (CS) | 1d100 under your chance to climb. | Click the dice icon. |
+
+#### Barbarian
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🛡️ Damage Reduction | Reduces all damage taken from non-magical attacks by 1 (2 at 9th level), never below 1. | Automatic. The module subtracts the DR when damage is applied to you. |
+| 👁️ Battle Senses | When surprised, unaware, or blind-fighting, enemies get +2 to hit you instead of +4. When surprised or in darkness, save vs Death to prevent doubled damage. | Click the Battle Senses button in your sheet header to roll the Death save. The +2 instead of +4 is a GM judgment. |
+| 🎲 Climb Sheer Surfaces (CS) | 1d100 under your chance to climb. | Click the dice icon. |
+| 🎲 Foraging | 2-in-6 chance to find food and water. | Click the dice icon. |
+| 🎲 Hunting | 5-in-6 chance to hunt game. | Click the dice icon. |
+| 🎲 Hide In Undergrowth (HD) | 1d100 under your chance to hide in undergrowth. | Click the dice icon. Blind roll. |
+| 🎲 Move Silently (MS) | 1d100 under your chance to move silently. | Click the dice icon. |
+
+#### Bard
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🛡️ Stunning Flourish | Your flourish stuns a target unless it saves vs Spells. | Click the dice icon on the ability to roll the target's Spell save. |
+| 🎲 Lore | 2-in-6 chance to know a piece of lore. | Click the dice icon. |
+| 🎲 Bardic Knowledge | 1-in-6 chance to recall a relevant fact. | Click the dice icon. Blind roll. |
+
+#### Druid
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🎲 Shape Change | 1d4 times per day you can assume animal form. | Click the dice icon to roll the daily uses. |
+| 🎲 Herbal Salves | 1d3 healing salves per day. | Click the dice icon to roll the daily count. |
+| 🎲 Antivenom Craft | 5-in-6 chance to brew antivenom. | Click the dice icon. |
+| 🎲 Path-Finding | 2-in-6 chance to find the path in the wilderness (roll over 2). | Click the dice icon. Blind roll. |
+
+#### Illusionist
+
+| Feature | What the rule does | How to use it |
 |---|---|---|
-| ⚔️ Cleave | Fighter | On successful melee hit, rolls a new melee attack |
-| 🤸 Dodge (dX) | Acrobat | Rolls the dodge die (d4/d6/d8/d10 by level), once per round |
-| 🍀/⛰️/🛡️/💨 Reroll | Lucky / Stout Fortune / Iron Will / Acrobat Evasion | Once-per-day reroll of a failed save, restricted to the feature's save categories |
+| 🎲 Minor Conjurations | 3-in-6 chance to create a minor illusion. | Click the dice icon. Blind roll. |
 
-### 8.2 Roll pipeline bonuses
+#### Knight
 
-Applied at the source by wrapping `OseActor#rollAttack` (synchronous
-mutation + restore, the same seam the Tweaks dialog edits):
-
-| Feature | Bonus | How |
+| Feature | What the rule does | How to use it |
 |---|---|---|
-| 🗿 Attack Giant Foes (Dwarf) | +2 attack vs giants | thac0.mod.melee/missile +2 |
-| 💥 Harm Giant Foes (Duergar) | +2 damage vs giants | item damage formula +2 |
-| 🎯 Precise Strikes (Sage) | INT mod to attack and damage | both channels |
-| 🤺 Finesse (Drow/Elf/Half-Elf) | DEX instead of STR | scores.str.mod swapped |
-| 🛡️ Underfoot Defense (Halfling) | large foes -1 to hit | attacker thac0/bba -1 |
+| 🛡️ Shield Stand | When you announce a shield stand before initiative, you and adjacent shield-wielding allies gain +2 to AC and +1 to Parry until your next turn, instead of +1. | Toggle Shield Stand in your sheet header. The +1 extra AC applies while on. Movement is still your call. |
 
-`OseActor#applyDamage` is wrapped for Barbarian **Damage Reduction** (DR 1,
-2 at 9th, min 1 damage). `OseActor#rollCheck` is wrapped for the **Faith's
-Influence** toggle (+1 to WIS/CHA checks while active).
+#### Paladin
 
-### 8.3 Sheet header toggles and rolls
-
-`renderActorSheet` appends a `.rf-toggle-row` to the character sheet header:
-
-| Button | Feature | Behavior |
+| Feature | What the rule does | How to use it |
 |---|---|---|
-| 🏃 Fleet in Terrain | Ranger | toggle flag (speed is GM-adjusted per terrain) |
-| ⚖️ Faith's Influence | Cleric | toggle flag; +1 to WIS/CHA checks while active |
-| 🛡️ Shield Stand | Knight | toggle; +1 AC (ac.mod/aac.mod) while active |
-| 👁️ Battle Senses | Barbarian | roll save vs Death (prevents doubled damage) |
+| 🎲 Clean of Body | 2-in-6 chance to resist disease and poison. | Click the dice icon. |
 
-### 8.4 Actor hooks
+#### Ranger
 
-- **💤 Sleep/Paralysis Immunity** (Drow/Elf/Half-Elf): `preUpdateActor`
-  strips sleep/paralysis/unconscious statuses from immune actors and posts
-  a notice card.
-- **💀 Grim Tenacity** (Half-Orc): `updateActor` watches HP; when it hits 0,
-  posts a chat card with a save-vs-Death button (once per day).
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🏃 Fleet in Terrain | Your speed increases by 10 feet in your favored terrain when not impeded. | Toggle Fleet in Terrain in your sheet header when in your favored terrain. |
+| 🛡️ Enemy Slayer | You may perform an assassination (like the Assassin class) against your common enemies: +4 to hit, double damage if they are unaware, and +1 to damage rolls. The target saves vs Death to survive the assassination. | Click the dice icon on the ability to roll the enemy's Death save when you strike. |
+| 🎲 Foraging | 2-in-6 chance to find food and water. | Click the dice icon. |
+| 🎲 Foraging and Hunting | 2-in-6 chance to forage and hunt. | Click the dice icon. |
+| 🎲 Hunting | 5-in-6 chance to hunt game. | Click the dice icon. |
+| 🎲 Stealth | 3-in-6 chance to move stealthily. | Click the dice icon. Blind roll. |
+| 🎲 Tracking | 1d100 under your chance to track. | Click the dice icon. |
 
-### 8.5 Technical notes
+### New Classes
 
-- Giant detection: OSE monsters have no size field, so "giant" is monster
-  name matching (`giant|ogre|troll|ettin|cyclops|golem|hydra`) or HD >= 8.
-- Reroll usage is stored per day via actor flags; dodge die per combat round
-  via an in-memory map cleared on combat hooks.
-- `Roll#toJSON` does not serialize roll `data`, so card-type detection is
-  DOM-based (`.chat-target`/`.damage-roll` presence, `.roll-fail` class,
-  `flags.ose.roll === "attack"` for attack cards).
-- Buttons use emoji/glyphs and `data-rf-tooltip` hovers quoting the exact
-  house-rule text from `OSE_HOUSE_RULES.md`.
+#### Sage
+
+| Feature | What the rule does | How to use it |
+| --- | --- | --- |
+| 🎯 Precise Strikes | Add your INT modifier to attack and damage rolls with weapons you are proficient in. | Automatic. Your attack and damage formulas include your INT bonus. |
+| 🎲 Sage Skills | 1d100 under your chance to succeed at a learned skill. | Click the dice icon. |
+| 🎲 Erudite Sense | 1d100 under your chance to sense the value of knowledge. | Click the dice icon. Blind roll. |
+| 🎲 Keen Observation | 1d100 under your chance to notice a detail. | Click the dice icon. |
+| 🎲 Medical Prowess | 1d100 under your chance to treat wounds. | Click the dice icon. |
+| 🎲 Research (Downtime) | 1d100 under your chance to complete research. | Click the dice icon. Blind roll. |
+| 🎲 Workshop (Downtime) | 1d100 under your chance to produce from your workshop. | Click the dice icon. |
+
+## What is not automated, and why
+
+A few features look automatable but are not. Honest automation matters more
+than automated-feeling automation: encoding a rule wrong is worse than
+leaving it to the GM. These stay descriptive:
+
+| Feature | Why it is not automated |
+| --- | --- |
+| Paladin Smite Evil | Triggers on natural 19/20 only. The OSE attack pipeline does not expose a clean hook for this yet. |
+| Bard Battle Songs | Morale bonuses affect monsters; there is no ally-morale field in the OSE data model. |
+| Drow Dark Assassination | Needs to know the target is unaware and the attacker is in darkness. That state is not tracked anywhere. |
+| Ranger Enemy Slayer (full) | The assassination roll works from the sheet, but the +4 hit / double damage part needs target-awareness state. |
+| Sage Keen Observation (full) | Would grant a temporary bonus to a target; needs a target-token hook that is not wired yet. |
+
+These are candidates for the next automation tier. See
+[DEVELOPMENT.md](DEVELOPMENT.md) for the roadmap.
+
+## Turning automation off
+
+The runtime layer (chat buttons, roll bonuses, toggles, status blocking)
+can be disabled entirely with the `Reforged Tier 1 Automation` module
+setting. The Active Effects and roll metadata always stay on: they are part
+of the items themselves.
+
+## Verification
+
+After installing, drag a class folder onto a test character and check:
+
+1. Rollable abilities show a dice icon in the Abilities tab.
+2. Halfling: Spell save is 2 lower, missile attack has +1, initiative has
+   +1 (the three Active Effects).
+3. Attack a giant with a Dwarf: the attack formula includes +2.
+4. Fail a save with a Halfling: the card shows a Reroll button.
