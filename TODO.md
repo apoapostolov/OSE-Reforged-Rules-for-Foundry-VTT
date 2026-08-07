@@ -39,11 +39,9 @@ downtime/domain play, environmental rulings) remain manual by design.
 These are not feature gaps - the features above are automated - but
 quality-of-life ideas if a table finds a rule painful in play:
 
-- **Druid - Natural Healing:** a Rest macro that rolls 1d3 HP recovery for
-  the party after a full day of rest, and double recovery under a Druid's
-  favored terrain.
-- **Poison/disease save handling:** a macro that looks up the save target
-  for a poison type and rolls the save for the affected character.
-- **Downtime automation:** a Settlements macro that rolls the philanthropy
-  threshold consequences automatically when a party crosses a settlement
-  donation threshold.
+- **Group exploration rolls:** a single macro that rolls Listen, Search,
+  and Find Traps for the whole party at once (currently the Shared X-in-Y
+  Check does one skill at a time).
+- **Downtime calendar:** a scene-flag tracker that records how many days
+  the party spent resting, carousing, or traveling, and reminds the GM
+  when a full week of bed rest is done.
