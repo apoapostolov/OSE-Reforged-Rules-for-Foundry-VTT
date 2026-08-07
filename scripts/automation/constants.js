@@ -68,6 +68,11 @@ export const FEATURES = {
   illusionSavvy: "Illusion Savvy",
   battleOath: "Battle Oath",
   stubbornVitality: "Stubborn Vitality",
+  battleSongs: "Battle Songs",
+  keenObservation: "Keen Observation",
+  awareness: "Awareness",
+  vigilantGuide: "Vigilant Guide",
+  roughCompany: "Rough Company",
 };
 
 // Finesse features by name (any of them activates DEX-for-STR logic).

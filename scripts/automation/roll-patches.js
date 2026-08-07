@@ -358,6 +358,49 @@ export function patchRollAttack(original) {
           });
         }
       }
+
+      // Battle Songs (Bard): if a Bard with an active Play Instrument
+      // effect is on the field, enemies who can hear it suffer -2 to
+      // attack rolls unless they target the Bard. The Bard macro sets
+      // flag battleSongMode = "play" on the Bard actor. We scan combatants
+      // for any Bard with that flag; if found and this actor is not
+      // targeting that Bard, apply -2.
+      if (game.combat && target) {
+        for (const combatant of game.combat.combatants) {
+          const bardActor = combatant.actor;
+          if (!bardActor) continue;
+          const mode = bardActor.getFlag(FLAG_ROOT, "battleSongMode");
+          if (mode === "play" && bardActor.uuid !== target.uuid) {
+            if (thac0Mod) {
+              if (type === "melee") thac0Mod.melee = (thac0Mod.melee ?? saved.melee ?? 0) - 2;
+              else thac0Mod.missile = (thac0Mod.missile ?? saved.missile ?? 0) - 2;
+            }
+            break; // only one Bard penalty applies
+          }
+        }
+      }
+
+      // Keen Observation (Sage): the Sage studies a target (macro), and on
+      // success sets a flag on the TARGET actor granting allies +attack /
+      // +damage. The flag carries the bonus values and the Sage's uuid so
+      // the bonus applies only to allies (not the Sage). The macro also
+      // places a timed Active Effect for the duration.
+      if (target) {
+        const studyFlag = target.getFlag(FLAG_ROOT, "keenObserved");
+        if (studyFlag && studyFlag.sageUuid !== actor.uuid) {
+          const atkBonus = studyFlag.attackBonus ?? 0;
+          const dmgBonus = studyFlag.damageBonus ?? 0;
+          if (atkBonus && thac0Mod) {
+            if (type === "melee") thac0Mod.melee = (thac0Mod.melee ?? saved.melee ?? 0) + atkBonus;
+            else thac0Mod.missile = (thac0Mod.missile ?? saved.missile ?? 0) + atkBonus;
+          }
+          if (dmgBonus && typeof itemDamage === "string") {
+            const sign = dmgBonus > 0 ? "+" : "";
+            attData.item.system.damage = `${itemDamage}${sign}${dmgBonus}`;
+          }
+        }
+      }
+
       return roll;
     } finally {
       if (data.thac0?.mod) {
