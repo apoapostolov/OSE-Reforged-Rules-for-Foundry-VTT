@@ -1,0 +1,159 @@
+/**
+ * OSE Reforged Rules — Tier 1 Automation CSS
+ *
+ * Reuses the OSE core chat-card classes (.ose.chat-block, .card-buttons,
+ * .chat-title, .card-content) so the automation looks native, then adds a
+ * thin polish layer: emoji buttons, hover tooltips with rule text, and the
+ * sheet toggle row.
+ *
+ * Palette matched from dist/ose.css: parchment #f5f5f5, ink #4b4a44,
+ * border #7a7971, danger #aa0200, success #18520b.
+ */
+
+/* ---------------------------------------------------------------- */
+/*  Buttons (chat cards + toggles)                                   */
+/* ---------------------------------------------------------------- */
+
+.rf-btn {
+  cursor: pointer;
+  font-size: var(--font-size-12);
+  height: 26px;
+  line-height: 20px;
+  margin: 2px 0;
+  padding: 0 6px;
+  border: 1px solid #7a7971;
+  border-radius: 3px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.1));
+  color: #4b4a44;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.rf-btn:hover:not(:disabled) {
+  border-color: #4b4a44;
+  background: rgba(0, 0, 0, 0.16);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+}
+
+.rf-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.rf-btn-emoji {
+  margin-right: 3px;
+  font-size: 1.1em;
+}
+
+/* ---------------------------------------------------------------- */
+/*  Hover tooltips with rule text                                    */
+/*  Uses the namespaced data-rf-tooltip attribute: Foundry's core     */
+/*  TooltipManager owns `data-tooltip`, so a custom attribute avoids  */
+/*  double-rendering and keeps full control of the rule text style.   */
+/* ---------------------------------------------------------------- */
+
+[data-rf-tooltip] {
+  position: relative;
+}
+
+[data-rf-tooltip]::after {
+  content: attr(data-rf-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  z-index: 100;
+  min-width: 220px;
+  max-width: 320px;
+  padding: 6px 8px;
+  border: 1px solid #4b4a44;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.92);
+  color: #f5f5f5;
+  font-size: var(--font-size-11);
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+[data-rf-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------- */
+/*  Rule tags on attack cards (passive feature badges)               */
+/* ---------------------------------------------------------------- */
+
+.rf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 3px 4px;
+  border-top: 2px groove #fff;
+  margin-top: 4px;
+}
+
+.rf-rule-tag {
+  cursor: help;
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border: 1px solid #7a7971;
+  border-radius: 3px;
+  background: #4b4a44;
+  color: #f5f5f5;
+  font-size: var(--font-size-11);
+  line-height: 1.5;
+  box-shadow: 0 0 2px #d8d6c9;
+}
+
+.rf-rule-tag .rf-btn-emoji {
+  font-size: 1em;
+}
+
+/* ---------------------------------------------------------------- */
+/*  Immunity chat card                                               */
+/* ---------------------------------------------------------------- */
+
+.rf-immunity-card .card-content p {
+  margin: 4px 0;
+}
+
+.rf-tooltip-text {
+  font-size: var(--font-size-11);
+  color: #7a7971;
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------- */
+/*  Sheet header toggle row                                          */
+/* ---------------------------------------------------------------- */
+
+.rf-toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.rf-toggle {
+  flex: 0 0 auto;
+  height: 24px;
+  line-height: 18px;
+}
+
+.rf-toggle.active {
+  border-color: #18520b;
+  background: rgba(24, 82, 11, 0.18);
+  color: #18520b;
+  font-weight: bold;
+}
+
+.rf-toggle.active::before {
+  content: "● ";
+  color: #18520b;
+}

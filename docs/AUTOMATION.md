@@ -1,4 +1,4 @@
-# OSE Reforged Rules — Automation Documentation
+# OSE Reforged Rules - Automation Documentation
 
 This document explains every piece of automation in the Reforged Class
 Features compendium: what is automated, how it works, what you see when you
@@ -369,3 +369,74 @@ metadata:
 | Roll metadata | 84 | Rollable abilities with correct targets and blind rolls |
 | Save metadata | 6 | Abilities that trigger a save roll |
 | Descriptive only | rest | Conditional or event-driven features |
+
+---
+
+## 8. Tier 1 runtime automation (v1.2.0+)
+
+The module ships a runtime layer in `scripts/automation/` (1,346 lines) that
+implements the Tier 1 features from the full automation blueprint. It is
+feature-detected: drag the Reforged ability onto a character and the
+automation activates. Disable everything with the `Reforged Tier 1
+Automation` module setting (`automationEnabled`).
+
+### 8.1 Chat-card option buttons
+
+Injected via `renderChatMessageHTML` into OSE cards. Every button has an
+emoji/glyph before its label and a `data-rf-tooltip` hover bubble quoting
+the rule text. Buttons live in a `.rf-card-buttons` container (NOT
+`.card-buttons`, so OSE's own delegated handler does not hijack them).
+
+| Button | Feature | Behavior |
+|---|---|---|
+| ⚔️ Cleave | Fighter | On successful melee hit, rolls a new melee attack |
+| 🤸 Dodge (dX) | Acrobat | Rolls the dodge die (d4/d6/d8/d10 by level), once per round |
+| 🍀/⛰️/🛡️/💨 Reroll | Lucky / Stout Fortune / Iron Will / Acrobat Evasion | Once-per-day reroll of a failed save, restricted to the feature's save categories |
+
+### 8.2 Roll pipeline bonuses
+
+Applied at the source by wrapping `OseActor#rollAttack` (synchronous
+mutation + restore, the same seam the Tweaks dialog edits):
+
+| Feature | Bonus | How |
+|---|---|---|
+| 🗿 Attack Giant Foes (Dwarf) | +2 attack vs giants | thac0.mod.melee/missile +2 |
+| 💥 Harm Giant Foes (Duergar) | +2 damage vs giants | item damage formula +2 |
+| 🎯 Precise Strikes (Sage) | INT mod to attack and damage | both channels |
+| 🤺 Finesse (Drow/Elf/Half-Elf) | DEX instead of STR | scores.str.mod swapped |
+| 🛡️ Underfoot Defense (Halfling) | large foes -1 to hit | attacker thac0/bba -1 |
+
+`OseActor#applyDamage` is wrapped for Barbarian **Damage Reduction** (DR 1,
+2 at 9th, min 1 damage). `OseActor#rollCheck` is wrapped for the **Faith's
+Influence** toggle (+1 to WIS/CHA checks while active).
+
+### 8.3 Sheet header toggles and rolls
+
+`renderActorSheet` appends a `.rf-toggle-row` to the character sheet header:
+
+| Button | Feature | Behavior |
+|---|---|---|
+| 🏃 Fleet in Terrain | Ranger | toggle flag (speed is GM-adjusted per terrain) |
+| ⚖️ Faith's Influence | Cleric | toggle flag; +1 to WIS/CHA checks while active |
+| 🛡️ Shield Stand | Knight | toggle; +1 AC (ac.mod/aac.mod) while active |
+| 👁️ Battle Senses | Barbarian | roll save vs Death (prevents doubled damage) |
+
+### 8.4 Actor hooks
+
+- **💤 Sleep/Paralysis Immunity** (Drow/Elf/Half-Elf): `preUpdateActor`
+  strips sleep/paralysis/unconscious statuses from immune actors and posts
+  a notice card.
+- **💀 Grim Tenacity** (Half-Orc): `updateActor` watches HP; when it hits 0,
+  posts a chat card with a save-vs-Death button (once per day).
+
+### 8.5 Technical notes
+
+- Giant detection: OSE monsters have no size field, so "giant" is monster
+  name matching (`giant|ogre|troll|ettin|cyclops|golem|hydra`) or HD >= 8.
+- Reroll usage is stored per day via actor flags; dodge die per combat round
+  via an in-memory map cleared on combat hooks.
+- `Roll#toJSON` does not serialize roll `data`, so card-type detection is
+  DOM-based (`.chat-target`/`.damage-roll` presence, `.roll-fail` class,
+  `flags.ose.roll === "attack"` for attack cards).
+- Buttons use emoji/glyphs and `data-rf-tooltip` hovers quoting the exact
+  house-rule text from `OSE_HOUSE_RULES.md`.

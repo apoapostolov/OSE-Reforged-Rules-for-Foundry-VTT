@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## 1.2.0 - 2026-08-07
+
+Tier 1 automation layer: chat-card buttons, roll bonuses, and sheet toggles
+for Reforged class features. Every button has an emoji/glyph and a hover
+tooltip explaining the rule it applies.
+
+- **Chat-card option buttons** (injected into OSE cards with native styling):
+  - ⚔️ **Cleave** (Fighter): extra melee attack on successful hits.
+  - 🤸 **Dodge Die** (Acrobat): roll the dodge die (d4/d6/d8/d10 by level)
+    against an incoming attack, once per round.
+  - 🍀 **Lucky** (Halfling), ⛰️ **Stout Fortune** (Dwarf), 🛡️ **Iron Will**
+    (Duergar), 💨 **Acrobat Evasion**: once-per-day rerolls on failed saves,
+    restricted to the save categories each feature covers.
+- **Roll pipeline bonuses** (applied automatically at the source):
+  - 🗿 **Attack Giant Foes** (Dwarf): +2 attack vs giants.
+  - 💥 **Harm Giant Foes** (Duergar): +2 damage vs giants.
+  - 🛡️ **Damage Reduction** (Barbarian): DR 1 (2 at 9th), min 1 damage.
+  - 🎯 **Precise Strikes** (Sage): INT modifier to attack and damage.
+  - 🤺 **Finesse** (Drow/Elf/Half-Elf): DEX instead of STR on melee.
+- **Sheet header toggles** (with rule tooltips):
+  - 🏃 **Fleet in Terrain** (Ranger), ⚖️ **Faith's Influence** (Cleric),
+    🛡️ **Shield Stand** (Knight).
+- **💤 Sleep/Paralysis Immunity** (Drow/Elf/Half-Elf): blocks sleep and
+  paralysis statuses from being applied.
+- 💀 **Grim Tenacity** (Half-Orc): save vs Death button on 0-hp cards.
+- Giant detection: monster name pattern (giant/ogre/troll/ettin) or HD >= 8.
+- Automation can be disabled in module settings (`automationEnabled`).
+
 ## 1.1.0 - 2026-08-07
 
 Automation layer: Active Effects + roll/save metadata.

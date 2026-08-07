@@ -3,7 +3,7 @@
 
 Baseline: Foundry VTT 14.359, OSE system 2.3.0+, module ose-apo-reforged-rules
 1.1.0. Purpose: document every API surface needed to automate every Reforged
-class feature — not just passive AEs, but option buttons on chat messages,
+class feature - not just passive AEs, but option buttons on chat messages,
 new buttons/tabs on sheets, damage interception, 0-HP hooks, reroll prompts,
 conditional attack bonuses, and combat-event logic.
 
@@ -270,7 +270,7 @@ The `duration.expiry` field references these. A module can also check
 
 ### 4.6 Hooks
 
-- `applyActiveEffect(actor, change, current, delta, changes)` — fires only
+- `applyActiveEffect(actor, change, current, delta, changes)` - fires only
   for `custom.N` change types. Lets a module handle arbitrary computed
   effects during prepareData.
 
@@ -373,11 +373,11 @@ attackIsSuccess(roll, thac0, ac) {
 
 `digestAttackResult` (ose.js:1496) resolves `isSuccess`/`isFailure`/
 `victim`/`details` from the target's AC/AAC (ascending vs descending per
-setting). The chat card gets `result.victim` — the targeted token. This is
+setting). The chat card gets `result.victim` - the targeted token. This is
 the hook point for kill-detection (Cleave): compare target HP before/after.
 
 `sendAttackRoll` (ose.js:1559) accepts a `flags` param passed through to
-`ChatMessage.create` — a module can stamp attack messages with
+`ChatMessage.create` - a module can stamp attack messages with
 `flags["ose-reforged"].{...}` state at creation time.
 
 Hook points for conditional bonuses:
@@ -427,7 +427,7 @@ rollData.roll = { type: "above", target: saves[save].value, magic, poison }
 - Monsters use `OseDice.Roll`
 
 The chat card template already renders a `data-action="save"` button when
-`data.save` is set — this is what the official module leverages for
+`data.save` is set - this is what the official module leverages for
 assassination's death save.
 
 ### 6.5 Ability roll (rollFormula, ose.js:3930)

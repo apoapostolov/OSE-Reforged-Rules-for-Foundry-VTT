@@ -2,7 +2,7 @@
 
 [![Foundry VTT v14](https://img.shields.io/badge/Foundry%20VTT-v14-green)](https://foundryvtt.com/)
 [![OSE System](https://img.shields.io/badge/OSE-2.3.0%2B-blue)](https://foundryvtt.com/packages/ose)
-[![Module Version](https://img.shields.io/badge/version-1.1.0-blue)](./module.json)
+[![Module Version](https://img.shields.io/badge/version-1.2.0-blue)](./module.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 Compendium module for [Old-School Essentials](https://foundryvtt.com/packages/ose)
@@ -36,6 +36,28 @@ metadata pattern and going one step further with Active Effects:
 
 Full documentation of every effect, what it does, what you see, and where it
 affects the OSE system: **[docs/AUTOMATION.md](docs/AUTOMATION.md)**.
+
+## Tier 1 runtime automation
+
+Beyond the compendium, the module ships a runtime layer (v1.2.0+) that adds
+option buttons, roll bonuses, and sheet toggles. Every button carries an
+emoji/glyph and a hover tooltip explaining the rule it applies. Detected
+automatically from the items on the character sheet:
+
+- ⚔️ **Cleave** (Fighter) - extra melee attack on hits
+- 🤸 **Dodge Die** (Acrobat) - d4/d6/d8/d10 AC vs incoming attacks
+- 🍀 **Lucky** / ⛰️ **Stout Fortune** / 🛡️ **Iron Will** / 💨 **Acrobat
+  Evasion** - once-per-day save rerolls
+- 🗿 **Attack Giant Foes** / 💥 **Harm Giant Foes** - +2 vs giants
+- 🛡️ **Damage Reduction** (Barbarian) - DR 1 (2 at 9th)
+- 🤺 **Finesse** (Drow/Elf/Half-Elf) - DEX instead of STR
+- 🎯 **Precise Strikes** (Sage) - INT mod to attack and damage
+- 🏃 **Fleet in Terrain** / ⚖️ **Faith's Influence** / 🛡️ **Shield Stand** -
+  sheet header toggles
+- 💤 **Sleep/Paralysis Immunity** (Drow/Elf/Half-Elf) - status blocking
+- 💀 **Grim Tenacity** (Half-Orc) - save vs Death at 0 hp
+
+Disable everything with the `Reforged Tier 1 Automation` module setting.
 
 ## Installation
 
