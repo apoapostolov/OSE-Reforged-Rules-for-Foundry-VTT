@@ -10,6 +10,43 @@ The [Unreleased] section tracks work that has not shipped yet.
 
 Nothing pending.
 
+## [1.2.1] - 2026-08-07
+
+Final class-feature automation: the last five automatable Reforged
+features now have runtime support, so every automatable class feature in
+the module is covered.
+
+### Added (for players)
+
+- **Battle Songs (Bard):** use the Battle Songs macro to choose Sing
+  (+2 ally Morale) or Play (enemies -2 to attack rolls unless they
+  target the Bard). The module reads the Play flag during attack rolls
+  and applies the penalty automatically.
+- **Keen Observation (Sage):** use the macro to study a foe. On a
+  successful Observation roll, allies attacking the studied target gain
+  a bonus to attack and damage that scales with Sage level. The module
+  applies the bonus on attack rolls.
+
+### Added (for the GM)
+
+- **Surprise Check macro:** now detects Half-Elf Awareness (surprised
+  only on 1-3) and Ranger Vigilant Guide (party surprised on 1-in-6)
+  from party tokens and pre-selects the correct chance.
+- **Hireling Loyalty macro:** now detects Ranger Rough Company and
+  reminds the GM of the morale modifier for non-animal retainers.
+- **Rest & Healing macro:** rolls and applies recovery for a full rest
+  or bed rest, with an optional Druid Natural Healing double rate.
+- **Poison Save macro:** rolls the save vs Poison (death column) for the
+  six OSE poison types, reading the target's save value from the sheet.
+- **Philanthropy macro:** full house-rules settlement donations with
+  thresholds, XP calculation, and the 2d6 consequences table.
+
+### Changed
+
+- The utility macro suite is now 18 macros in the world-level
+  **Reforged Utility Macros** compendium (GM dungeon tools, judgment
+  rolls, and player dialogs).
+
 ## [1.2.0] - 2026-08-07
 
 Tier 1 automation for Reforged class features, plus the user documentation
