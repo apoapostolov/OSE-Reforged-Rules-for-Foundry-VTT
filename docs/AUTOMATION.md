@@ -13,6 +13,11 @@ It is written for two audiences:
 
 Version covered: **1.1.0** (2026-08-07).
 
+For the full Foundry v14 + OSE system API research (hooks catalog, chat
+message injection, sheet extension points, damage/save/attack pipeline,
+and the feature-by-feature automation map), see
+**[FULL_AUTOMATION_BLUEPRINT.md](FULL_AUTOMATION_BLUEPRINT.md)**.
+
 ---
 
 ## 1. Design Philosophy
