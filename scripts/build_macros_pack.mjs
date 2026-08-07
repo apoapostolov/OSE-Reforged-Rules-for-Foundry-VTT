@@ -35,9 +35,15 @@ for (const file of fs.readdirSync(MACRO_DIR).filter((f) => f.endsWith(".js")).so
     .map((w) => w[0].toUpperCase() + w.slice(1))
     .join(" ");
   // Core icons by macro (Foundry core "icons/" path, no leading slash).
+  // Paths verified against the foundry-icons-cache index.
   const ICONS = {
-    "charge-fury": "icons/environment/people/charge.webp",
-    "cleanse-evil-tag": "icons/weapons/swords/sword-gold-holy.webp",
+    "charge-fury-macro": "icons/environment/people/charge.webp",
+    "cleanse-evil-tag-macro": "icons/weapons/swords/sword-gold-holy.webp",
+    "enemy-slayer-mark-unaware": "icons/skills/ranged/target-bullseye-arrow-glowing.webp",
+    "dark-assassination": "icons/magic/unholy/strike-hand-glow-pink.webp",
+    "darkness-toggle-gm": "icons/magic/time/day-night-sun-moon.webp",
+    "battle-oath": "icons/magic/holy/projectiles-blades-salvo-yellow.webp",
+    "illusion-savvy-disbelieve": "icons/magic/defensive/illusion-evasion-echo-purple.webp",
   };
   macros.push({
     _id: stableId(slug),

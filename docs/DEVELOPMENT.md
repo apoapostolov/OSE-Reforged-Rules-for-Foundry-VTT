@@ -1,11 +1,11 @@
 # OSE Reforged Rules - Developer Documentation
 
-Internal documentation for maintainers, contributors, and AI agents working
-on this module. It covers what is implemented, how the automation is
-structured, and what remains to be built (Tier 2 and beyond).
+Internal documentation for maintainers and contributors working on this
+module. It covers what is implemented, how the automation is structured,
+and what remains to be built (Tier 2 and beyond).
 
 For the user-facing view, see [AUTOMATION.md](AUTOMATION.md). For the raw
-Foundry v14 + OSE API research (hooks catalog, chat message internals, AE
+Foundry v14 + OSE API notes (hooks catalog, chat message internals, AE
 change dispatch, sheet extension points, dice pipeline), see
 [FULL_AUTOMATION_BLUEPRINT.md](FULL_AUTOMATION_BLUEPRINT.md).
 
@@ -29,7 +29,7 @@ packs/reforged-class-features/   generated LevelDB (never hand-edited)
 docs/
   AUTOMATION.md            user guide (per-class automation tables)
   DEVELOPMENT.md           this file
-  FULL_AUTOMATION_BLUEPRINT.md   research archive (APIs, feature map)
+  FULL_AUTOMATION_BLUEPRINT.md   API notes and feature map
   house-rules/             the Reforged ruleset source
 ```
 

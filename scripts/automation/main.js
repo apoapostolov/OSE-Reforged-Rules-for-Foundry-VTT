@@ -8,7 +8,7 @@
  */
 import { MODULE_ID } from "./constants.js";
 import { registerChatHooks } from "./chat-cards.js";
-import { patchRollAttack, patchApplyDamage, patchRollCheck } from "./roll-patches.js";
+import { patchRollAttack, patchApplyDamage, patchRollCheck, clearBlinkOnTurn } from "./roll-patches.js";
 import { registerActorHooks } from "./actor-hooks.js";
 import { registerSheetHooks } from "./sheet-buttons.js";
 import { registerRoundUsageHooks } from "./helpers.js";
@@ -47,6 +47,24 @@ Hooks.once("ready", () => {
   registerSheetHooks();
   registerActorHooks();
   registerRoundUsageHooks();
+
+  // Battle Oath (Knight): the oath lasts until the knight falls or the
+  // encounter ends. Reset the flag when a combat is deleted so the knight
+  // can swear again next encounter. (The knight-falls clear happens in
+  // the updateActor hook alongside the other HP watchers.)
+  Hooks.on("deleteCombat", () => {
+    for (const a of game.actors ?? []) {
+      if (a.getFlag(MODULE_ID, "battleOath")) {
+        a.unsetFlag(MODULE_ID, "battleOath").catch(() => {});
+      }
+    }
+  });
+
+  // Blink Away (Gnome): the invisible state ends at the start of the
+  // gnome's next turn. Clear any active blink on every round change.
+  Hooks.on("combatRound", () => {
+    clearBlinkOnTurn();
+  });
 
   console.log(`${MODULE_ID} | Tier 1 automation active`);
 });

@@ -48,7 +48,7 @@ lives in module code.
 | Trigger on hooks (session-scoped) | `Hooks.on` inside macro or module |
 | Mass-edit party state | Iterate `game.actors`, `actor.update` batch |
 | Token/status manipulation | `actor.toggleStatusEffect(id)`, `actor.update({statuses})` |
-| Summon / transform tokens | `warpgate.spawnAt / mutate / revert` |
+| Summon / transform tokens | Spawn/mutate token documents via the core API |
 | GM-side rolls with hidden results | Blind rolls, whisper to GM |
 
 Two honest limits:
@@ -146,13 +146,13 @@ macro-shaped path:
 |---|---|---|---|
 | Barbarian Charge Fury | Charge macro (implemented) | rollAttack wrapper + HP=0 reset | `chargeActive`, `chargeSpent` flags |
 | Paladin Cleanse Evil / Dedication | GM tag macro (implemented) | rollAttack wrapper reads target evil flag | `evil` flag on target actor |
-| Paladin Smite Evil | GM tag macro (same tag) | rollAttack wrapper: natural 20/19/18 vs tagged target -> max + extra roll | `evil` flag on target actor |
-| Ranger Enemy Slayer | Mark-target macro: "enemy unaware" | rollAttack wrapper adds +4 / double damage | `unaware` flag on target actor |
-| Drow Dark Assassination | Darkness + mark-unaware macros | rollAttack wrapper adds +4 or double | scene/actor flags |
-| Gnome Blink Away | Blink macro | applyDamage hook + `toggleStatusEffect("invisible")` | once-per-day flag |
-| Illusion Savvy | Click-illusion macro | rollCheck wrapper vs illusion dc | none (roll only) |
-| Battle Oath (Knight) | Oath macro | combat hook adds taunted-mark, turn timer | combatant flags |
-| Half-Orc Stubborn Vitality | (Grim Tenacity card) | HP=0 hook computes reduced CON loss | per-day flag |
+| Paladin Smite Evil | GM tag macro (same tag, implemented) | rollAttack wrapper: natural 20/19/18 vs tagged target -> max + extra roll | `evil` flag on target actor |
+| Ranger Enemy Slayer | Mark-unaware macro (implemented) | rollAttack wrapper adds +4 / double damage | `unaware` flag on target actor |
+| Drow Dark Assassination | Darkness + mark-unaware macros (implemented) | rollAttack wrapper adds +4 or double (choice) | scene/actor flags |
+| Gnome Blink Away | None (auto) - damage triggers it | applyDamage hook + `toggleStatusEffect("invisible")`, round clear | once-per-day flag |
+| Illusion Savvy | Disbelieve macro (implemented) | rollCheck wrapper rolls WIS vs illusion | none (roll only) |
+| Battle Oath (Knight) | Oath macro (implemented) | combat hook: taunt mark, hireling morale +2, fall/encounter clear | `battleOath` flag |
+| Half-Orc Stubborn Vitality | None (auto) - HP=0 triggers it | HP=0 hook computes reduced CON loss | none (announcement card) |
 
 **Tier 2 features that benefit from the tag-toggle approach** (secondary
 method, beyond player-trigger macros):
@@ -177,16 +177,18 @@ module hook that enforces and consumes.
 ## Delivery model
 
 - **Compendium pack (shipped):** the module ships a **Reforged Macros**
-  Macro compendium pack (`packs/reforged-macros`, declared in module.json).
-  GMs drag macros from the compendium to the hotbar; each macro carries a
+  Macro compendium pack (`packs/reforged-macros`, declared in module.json)
+  with 7 macros: Charge Fury, Cleanse Evil tag, Enemy Slayer mark-unaware,
+  Dark Assassination, Darkness toggle, Battle Oath, Illusion Savvy
+  disbelieve. GMs drag macros from the compendium to the hotbar; each
+  macro carries a
   general-audience header comment (how to use, what it needs, what you
   see, troubleshooting) and a themed core icon. Rebuild with
   `node scripts/build_macros_pack.mjs packs/reforged-macros` after
   editing any source file in `scripts/automation/macros/`.
-- **Optional:** itemacro integration - attach macros to the ability items
-  themselves so clicking the ability runs the macro. itemacro supports OSE
-  natively; the module stays compatible by exposing `game.ose-reforged.*`
-  helpers the item macros call.
+- **Optional:** item-macro integration - attach macros to the ability items
+  themselves so clicking the ability runs the macro. The module stays
+  compatible by exposing `game.ose-reforged.*` helpers the item macros call.
 - **Never:** module code depends on a macro being present. The module's
   enforcement hooks are inert without the trigger, so a world without the
   macros still works.

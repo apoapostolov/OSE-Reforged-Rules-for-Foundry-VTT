@@ -59,6 +59,15 @@ export const FEATURES = {
   shieldStand: "Shield Stand",
   battleSenses: "Battle Senses",
   sleepParalysisImmunity: "Immunity to Sleep and Paralysis",
+  chargeFury: "Charge Fury",
+  dedicationLawGood: "Dedication to Law & Good",
+  smiteEvil: "Smite Evil",
+  enemySlayer: "Enemy Slayer",
+  darkAssassination: "Dark Assassination",
+  blinkAway: "Blink Away",
+  illusionSavvy: "Illusion Savvy",
+  battleOath: "Battle Oath",
+  stubbornVitality: "Stubborn Vitality",
 };
 
 // Finesse features by name (any of them activates DEX-for-STR logic).

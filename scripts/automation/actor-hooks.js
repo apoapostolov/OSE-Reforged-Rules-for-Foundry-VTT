@@ -10,8 +10,9 @@
  *   remain conscious until the end of the next round or -10 hp. A chat card
  *   with a save button is posted the moment HP hits 0 (once per day).
  */
-import { FEATURES } from "./constants.js";
-import { hasFeature, isUsedToday, makeButton, markUsedToday } from "./helpers.js";
+import { FEATURES, FLAG_ROOT } from "./constants.js";
+import { getLevel, hasFeature, isUsedToday, makeButton, markUsedToday } from "./helpers.js";
+import { _takeChargeHit } from "./chat-cards.js";
 
 const BLOCKED_STATUSES = ["sleep", "paralysis", "paralyzed", "unconscious"];
 
@@ -108,6 +109,8 @@ function notifyImmunity(actor) {
  * Watch HP updates: when a half-orc with Grim Tenacity drops to 0 hp, post a
  * chat card with a save-vs-Death button (once per day). The GM or player
  * clicks it to roll; on success the half-orc stays conscious per the rule.
+ * Also: when a barbarian's recorded charge target drops to 0 HP, reset the
+ * spent flag (Charge Fury re-arms after a kill) and announce it.
  * @param {Actor} actor
  * @param {object} changes
  * @param {object} options
@@ -115,10 +118,91 @@ function notifyImmunity(actor) {
  */
 async function onUpdateActor(actor, changes) {
   const hp = actor.system?.hp;
-  if (!hp || hp.value !== 0) return;
+  if (!hp) return;
+
+  // Charge Fury kill attribution: if this actor was last hit by a
+  // charge-capable barbarian and just dropped to 0 HP, that barbarian may
+  // charge again.
+  if (hp.value === 0) {
+    const hit = _takeChargeHit(actor.uuid);
+    if (hit) {
+      const barbarian = game.actors.get(hit.barbarianId);
+      if (barbarian?.getFlag(FLAG_ROOT, "chargeSpent")) {
+        await barbarian.unsetFlag(FLAG_ROOT, "chargeSpent");
+        const card = document.createElement("div");
+        card.className = "ose chat-card";
+        const block = document.createElement("div");
+        block.className = "ose chat-block";
+        const content = document.createElement("div");
+        content.className = "card-content";
+        const p = document.createElement("p");
+        p.append(barbarian.name, " reduced ", actor.name, " to 0 HP and may charge again!");
+        content.append(p);
+        block.append(content);
+        card.append(block);
+        await ChatMessage.create({
+          speaker: ChatMessage.getSpeaker({ actor: barbarian }),
+          flavor: "⚡ Charge Fury",
+          content: card.outerHTML,
+        });
+      }
+    }
+  }
+
+  // Battle Oath (Knight): while the knight stands, hirelings get +2
+  // morale and opponents of opposite alignment focus on the knight. If
+  // the knight drops to 0 hp or lower, the oath ends.
+  if (hp.value <= 0 && actor.getFlag(FLAG_ROOT, "battleOath")) {
+    await actor.unsetFlag(FLAG_ROOT, "battleOath");
+    const card = document.createElement("div");
+    card.className = "ose chat-card";
+    const block = document.createElement("div");
+    block.className = "ose chat-block";
+    const content = document.createElement("div");
+    content.className = "card-content";
+    const p = document.createElement("p");
+    p.textContent = `${actor.name} has fallen. The Battle Oath is broken; hirelings lose the +2 morale bonus.`;
+    content.append(p);
+    block.append(content);
+    card.append(block);
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: "🛡️ Battle Oath",
+      content: card.outerHTML,
+    });
+  }
+
+  // Stubborn Vitality: half-orc's CON loss when reaching 0 hp or lower is
+  // reduced by 1 (by 2 at 5th level, by 3 at 9th). The base CON loss is
+  // the table's standard (applied by the GM); this card states the reduced
+  // amount so the GM applies it instead.
+  if (hp.value <= 0 && hasFeature(actor, FEATURES.stubbornVitality)) {
+    const level = getLevel(actor);
+    const reduction = level >= 9 ? 3 : level >= 5 ? 2 : 1;
+    const card = document.createElement("div");
+    card.className = "ose chat-card";
+    const block = document.createElement("div");
+    block.className = "ose chat-block";
+    const content = document.createElement("div");
+    content.className = "card-content";
+    const p = document.createElement("p");
+    p.textContent =
+      `${actor.name} is at 0 hp or lower. Stubborn Vitality: the usual ` +
+      `Constitution loss is reduced by ${reduction} (level ${level}).`;
+    content.append(p);
+    block.append(content);
+    card.append(block);
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: "💪 Stubborn Vitality",
+      content: card.outerHTML,
+    });
+  }
+
+  // Grim Tenacity: half-orc dropped to 0 hp.
+  if (hp.value !== 0) return;
   if (!hasFeature(actor, FEATURES.grimTenacity)) return;
   if (isUsedToday(actor, "grimTenacity")) return;
-
   // Build a card with the save button. DOM-built so actor name cannot
   // inject HTML.
   const card = document.createElement("div");

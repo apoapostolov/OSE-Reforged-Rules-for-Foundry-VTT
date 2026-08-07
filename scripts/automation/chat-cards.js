@@ -115,6 +115,22 @@ export function cardTarget(card) {
 /* ---------------------------------------------------------------- */
 
 /**
+ * Record a melee hit by a charge-capable barbarian for kill attribution.
+ * Called on every attack card; only barbarians with the Charge Fury
+ * feature are recorded, and only when the card actually hit (has a
+ * damage-roll block) and named a victim.
+ * @param {HTMLElement} card
+ */
+function recordChargeHit(card) {
+  const actor = cardActor(card);
+  if (!actor || !hasFeature(actor, FEATURES.chargeFury)) return;
+  if (!card.querySelector(".damage-roll")) return; // miss: no damage block
+  const targetId = card.querySelector(".chat-target")?.dataset?.id;
+  if (!targetId) return;
+  _recordChargeHit(targetId, actor.id);
+}
+
+/**
  * Add the Cleave button to a successful melee attack card when the attacker
  * has the feature. Clicking rolls a new melee attack against the current
  * controlled targets. The GM clicks when the kill actually happens.
@@ -236,6 +252,21 @@ function addRerollButton(card) {
 /*  Rule tags on attack cards (passive features)                     */
 /* ---------------------------------------------------------------- */
 
+// Kill attribution for Charge Fury: last hit by a charge-capable
+// barbarian per victim uuid, so the updateActor hook can reset the spent
+// flag when the victim drops to 0 HP. In-memory (per-session).
+const _chargeHits = new Map(); // victimUuid -> { barbarianId, round }
+
+export function _recordChargeHit(victimUuid, actorId) {
+  _chargeHits.set(victimUuid, { barbarianId: actorId, round: game.combat?.round ?? 0 });
+}
+
+export function _takeChargeHit(victimUuid) {
+  const hit = _chargeHits.get(victimUuid);
+  _chargeHits.delete(victimUuid);
+  return hit ?? null;
+}
+
 /**
  * Tag an attack card with the passive features that apply: giant-foe
  * bonuses. These are informational; the numeric bonuses are applied by the
@@ -291,6 +322,7 @@ export function registerChatHooks() {
       addCleaveButton(message, card);
       addDodgeDieButton(card);
       addRuleTags(card);
+      recordChargeHit(card);
     } else if (isSaveCard(card)) {
       addRerollButton(card);
     }
