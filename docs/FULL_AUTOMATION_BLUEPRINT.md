@@ -358,10 +358,29 @@ rollParts: ["1d20"]
 + thac0.mod.melee OR thac0.mod.missile
 + item.system.bonus
 rollData.roll = { type, thac0, dmg:[damage_formula, ...mods], save, target }
--> OseDice.Roll({ parts: rollParts, data: rollData, flavor, speaker })
+-> OseDice.sendAttackRoll({ parts, data, flags, title, flavor, speaker })
 ```
 
-Hook points:
+Attack success math (`OseDice.attackIsSuccess`, ose.js:1476):
+
+```js
+attackIsSuccess(roll, thac0, ac) {
+  if (roll.terms[0].results[0].result === 1) return false;   // natural 1
+  if (roll.terms[0].results[0].result === 20) return true;   // natural 20
+  return roll.total + ac >= thac0;
+}
+```
+
+`digestAttackResult` (ose.js:1496) resolves `isSuccess`/`isFailure`/
+`victim`/`details` from the target's AC/AAC (ascending vs descending per
+setting). The chat card gets `result.victim` — the targeted token. This is
+the hook point for kill-detection (Cleave): compare target HP before/after.
+
+`sendAttackRoll` (ose.js:1559) accepts a `flags` param passed through to
+`ChatMessage.create` — a module can stamp attack messages with
+`flags["ose-reforged"].{...}` state at creation time.
+
+Hook points for conditional bonuses:
 - `game.user.targets` gives target tokens → read `actor.system.ac.aac.value`
   for ascending AC comparison
 - Module wraps `OseActor.prototype.rollAttack` or intercepts
