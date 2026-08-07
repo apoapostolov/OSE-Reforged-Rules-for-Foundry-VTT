@@ -23,54 +23,12 @@ There is no date on any of this. The features are listed in rough priority
 order, and the priority comes from how much bookkeeping each one removes
 versus how hard it is to build safely.
 
+**Progress:** 9 of the original 14 automatable features are now automated
+(Smite Evil, Dedication to Law and Good, Enemy Slayer, Dark Assassination,
+Charge Fury, Stubborn Vitality, Blink Away, Illusion Savvy, Battle Oath).
+Five remain below, plus four that are deliberately left to the table.
+
 ## Likely next
-
-### Paladin - Smite Evil
-
-- **Today:** When you roll a natural 20 (19 at 9th, 18 at 14th) against an
-  evil creature, you compute max damage plus an extra damage roll by hand
-  and announce it.
-- **Why not yet:** The module would need to watch every attack roll, detect
-  a natural 20, check the target is evil, and then roll twice as much
-  damage. That is a real attack-pipeline change, not a button.
-- **When automated:** You roll to hit, and if it is a smite the module
-  announces it, rolls max damage plus the extra die, and adds both to the
-  damage total. No math, no forgetting the extra roll.
-
-### Paladin - Dedication to Law and Good
-
-- **Today:** You mentally apply +1 to hit against evil creatures with equal
-  or higher HD, and +2 damage against evil creatures with lower HD, and
-  you have to know which case you are in.
-- **Why not yet:** The module would need to read the target's alignment and
-  Hit Dice from its sheet, compare them to yours, and apply the right bonus
-  to each roll. Monsters do not all carry a clean alignment value the
-  module can trust.
-- **When automated:** Your attack roll formula shows the correct bonus
-  automatically for whatever you are fighting. You stop doing the
-  HD-comparison math in your head.
-
-### Ranger - Enemy Slayer (the hit and damage part)
-
-- **Today:** The Death-save roll is already on the sheet. The +4 to hit and
-  double damage when the enemy is unaware are applied by hand.
-- **Why not yet:** The module cannot know an enemy is "unaware." There is no
-  flag in the game for that, and guessing from token position would be
-  wrong too often.
-- **When automated:** You mark the target as unaware once (a button on its
-  token), and the module rolls your attack at +4 and doubles the damage
-  when it lands. The Death save stays one click.
-
-### Drow - Dark Assassination
-
-- **Today:** When you attack in pitch darkness, you apply +4 against
-  unaware or blinded creatures, or forfeit the bonus to deal double damage.
-- **Why not yet:** Same unawareness problem as Enemy Slayer, plus the module
-  would need to know the scene is actually dark, which Foundry does not
-  track for you.
-- **When automated:** You flip a "darkness" toggle on the scene, mark your
-  target as unaware, and the module offers you the choice: +4 to hit, or
-  double damage. One click, no table lookup.
 
 ### Bard - Battle Songs
 
@@ -93,45 +51,6 @@ versus how hard it is to build safely.
 - **When automated:** You click the target, the module places a small timed
   bonus on its sheet, and the bonus expires on its own. Same for any
   future "study the enemy" effects.
-
-## Further out
-
-These need more groundwork (mostly scene state or combat timers), so they
-sit behind the list above.
-
-### Barbarian - Charge Fury
-
-- **Today:** When you charge, you add +2 to hit and +2 plus Strength to
-  damage, and you can charge again after dropping an enemy.
-- **Why not yet:** The module would need to know you are charging (a
-  movement state it does not see) and track the extra charge.
-- **When automated:** You declare a charge once, the module applies both
-  bonuses to the roll, and it offers the follow-up charge automatically
-  when you drop the target.
-
-### Half-Orc - Stubborn Vitality
-
-- **Today:** When you drop to 0 HP or lower, you reduce your Constitution by
-  one less than normal (two less at 5th and 9th). You track the reduced
-  loss by hand.
-- **Why not yet:** The module already watches HP for Grim Tenacity, but
-  changing a Constitution score on the fly is a bigger, riskier operation
-  than showing a save button.
-- **When automated:** You drop, and the module offers the Grim Tenacity
-  save and then asks how much damage took you down, computes the reduced
-  Constitution loss, and applies it. Two clicks instead of a pencil
-  eraser.
-
-### Gnome - Blink Away
-
-- **Today:** Once per day, when you take damage, you declare you vanish
-  until your next turn or until you take damage again.
-- **Why not yet:** The module would need to apply an invisible state to your
-  token, remove it on your next turn or on damage, and track the once-per-
-  day use.
-- **When automated:** You take damage, a Blink button appears on the damage
-  card, you click it, your token becomes invisible, and it blinks back by
-  itself when the effect ends.
 
 ### Half-Elf - Awareness
 
@@ -164,25 +83,33 @@ sit behind the list above.
   correct morale modifier and shows it on the hireling's card. The
   recruiting math stops being a spreadsheet.
 
-### Illusionist - Illusion Savvy
+## What was already automated (moved here from earlier versions of this page)
 
-- **Today:** When you can see an illusion, you roll a simple Wisdom check to
-  disbelieve it for yourself. You ask the GM to roll, or roll and report.
-- **Why not yet:** Illusions are not represented as objects in the game, so
-  there is nothing for the module to attach the check to.
-- **When automated:** You click the illusion (whatever the GM used to show
-  it), the module rolls your Wisdom check against the target and tells only
-  you the result. The GM stops being the middleman for every illusion.
+These were on the TODO list when this module shipped and are now done:
 
-### Knight - Battle Oath
-
-- **Today:** Once per encounter, before initiative, you speak an oath that
-  taunts opponents. You and the GM track who is taunted and for how long.
-- **Why not yet:** It is a taunt with a duration and an intelligence check
-  for smart enemies. That is encounter state the module does not manage.
-- **When automated:** You click the oath, the module marks the taunted
-  enemies for the encounter and rolls the intelligence check for clever
-  ones automatically. Taunts stop being forgotten.
+- **Paladin - Smite Evil** - natural 20 (19 at 9th, 18 at 14th) vs an
+  Evil-tagged creature: max damage plus an extra damage roll. The GM tags
+  the creature with the Cleanse Evil macro; the module detects the smite
+  and posts the card.
+- **Paladin - Dedication to Law and Good** - +1 to hit vs Evil creatures
+  with HD >= the paladin's level, +2 damage vs HD < level. Reads the same
+  Evil tag.
+- **Ranger - Enemy Slayer** - mark a target unaware with the macro; +4 to
+  hit and double damage on the next attack against it.
+- **Drow - Dark Assassination** - in darkness, +4 to hit or double damage
+  (your choice) against an unaware or blinded creature.
+- **Barbarian - Charge Fury** - declare a charge; the next melee attack
+  gains +2 to hit and +2 plus Strength to damage; a kill re-arms it.
+- **Half-Orc - Stubborn Vitality** - at 0 HP or lower, the Constitution
+  loss is reduced (by 1, 2 at 5th, 3 at 9th); the module posts the reduced
+  amount.
+- **Gnome - Blink Away** - once per day, taking damage makes you invisible
+  until your next turn or until damaged again.
+- **Illusionist - Illusion Savvy** - a WIS check to disbelieve an illusion
+  you can see.
+- **Knight - Battle Oath** - once per encounter, swear an oath; hirelings
+  get +2 morale while you stand, and the module clears it when you fall or
+  the encounter ends.
 
 ## Likely stays manual
 
