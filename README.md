@@ -85,6 +85,7 @@ Tier 1 Automation` module setting.
 | Document | For | Contents |
 | --- | --- | --- |
 | [docs/AUTOMATION.md](docs/AUTOMATION.md) | Players and GMs | Every automated effect per class, what the rule does, how to trigger it |
+| [TODO.md](TODO.md) | Players and GMs | Class features that are not automated yet, why, and what automation will feel like |
 | [docs/house-rules/](docs/house-rules/README.md) | Players and GMs | The full Reforged ruleset the compendium is built from |
 | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Developers and AI | What is implemented, the architecture, what remains (Tier 2+) |
 | [docs/FULL_AUTOMATION_BLUEPRINT.md](docs/FULL_AUTOMATION_BLUEPRINT.md) | Developers | Foundry v14 + OSE API research and the feature automation map |
