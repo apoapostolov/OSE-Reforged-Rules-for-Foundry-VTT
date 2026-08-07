@@ -78,7 +78,8 @@ runtime provides the enforcement half via `game.<moduleId>` helpers.
 
 The reference implementation of the macro-sets-state pattern.
 
-**Macro** (`scripts/automation/macros/charge-fury.js`):
+**Macro** (`scripts/automation/macros/charge-fury-macro.js`, shipped in
+the **Reforged Macros** compendium pack):
 
 1. Resolves the actor (controlled token, then user character).
 2. Guards: refuses if `chargeSpent` (must kill to re-arm) or if already
@@ -107,6 +108,42 @@ is consumed with a message. Drop an enemy, and the module tells you the
 barbarian can charge again. The exhausted state lives on the actor, so it
 survives reloads and is visible to the player's own macro guard.
 
+## The tag-toggle pattern (secondary approach)
+
+A second macro architecture, complementary to state-flags: instead of the
+player declaring intent, the GM declares a persistent property of a
+creature, and the system reads it on ordinary rolls.
+
+**Cleanse Evil (Paladin) - implemented prototype:**
+
+The Paladin rules (Dedication to Law & Good, Smite Evil) key off
+"inherently evil creatures", but OSE's monster data model has no alignment
+field. The tag-toggle supplies that state:
+
+1. **GM macro** (`scripts/automation/macros/cleanse-evil-tag-macro.js`,
+   shipped in the **Reforged Macros** compendium pack with a holy-sword
+   core icon): the DM targets a vampire (or demon, cultist...) and runs
+   the macro. It toggles
+   `flags.ose-apo-reforged-rules.evil` on the target actor and whispers the
+   result to the GM. The tag is hidden metadata, invisible to players, and
+   survives reloads.
+2. **Paladin's normal attack** (no Paladin macro): the module's
+   `rollAttack` wrapper detects the Dedication feature (item present),
+   reads the target's evil flag, and applies the bonuses: +1 to hit vs
+   evil creatures with HD >= the paladin's level, +2 damage vs evil
+   creatures with HD < the paladin's level. HD is parsed from the monster
+   dice string ("2d6" -> 2).
+
+**Why the tag must be a flag, not a condition:** Apo's two-way design
+distinction. Conditions (status icons) are simple and visible, but public:
+players can see the mark. The hidden metadata flag is required when the DM
+knows the vampire is evil and the players do not yet. The macro supports
+both modes (a `USE_HIDDEN_FLAG` switch) so the GM picks per use.
+
+**The feel:** the DM marks the vampire before the fight. The Paladin just
+rolls attacks as always - the module adds +1/+2 automatically on tagged
+creatures, and the players never see why.
+
 ## Roadmap: features that become automatable via macros
 
 The TODO list features that were "stuck" on missing state now have a
@@ -115,7 +152,8 @@ macro-shaped path:
 | Feature | Macro trigger | Module enforcement | State |
 |---|---|---|---|
 | Barbarian Charge Fury | Charge macro (implemented) | rollAttack wrapper + HP=0 reset | `chargeActive`, `chargeSpent` flags |
-| Paladin Smite Evil | Smite macro: declares the smite | rollAttack wrapper detects natural 20/19/18 | `smiteActive` flag, target check |
+| Paladin Cleanse Evil / Dedication | GM tag macro (implemented) | rollAttack wrapper reads target evil flag | `evil` flag on target actor |
+| Paladin Smite Evil | GM tag macro (same tag) | rollAttack wrapper: natural 20/19/18 vs tagged target -> max + extra roll | `evil` flag on target actor |
 | Ranger Enemy Slayer | Mark-target macro: "enemy unaware" | rollAttack wrapper adds +4 / double damage | `unaware` flag on target actor |
 | Drow Dark Assassination | Darkness + mark-unaware macros | rollAttack wrapper adds +4 or double | scene/actor flags |
 | Gnome Blink Away | Blink macro | applyDamage hook + `toggleStatusEffect("invisible")` | once-per-day flag |
@@ -123,15 +161,35 @@ macro-shaped path:
 | Battle Oath (Knight) | Oath macro | combat hook adds taunted-mark, turn timer | combatant flags |
 | Half-Orc Stubborn Vitality | (Grim Tenacity card) | HP=0 hook computes reduced CON loss | per-day flag |
 
+**Tier 2 features that benefit from the tag-toggle approach** (secondary
+method, beyond player-trigger macros):
+
+| Feature | Tag needed | Why the tag unlocks it |
+|---|---|---|
+| Smite Evil (Paladin) | `evil` on target | Natural-20/19/18 detection needs the "inherently evil" qualifier; rides the Cleanse Evil tag with zero extra GM work |
+| Sanctified Sense (Paladin) | `evil` on targets | A "sense" macro (or combat-start hook) lists all tagged creatures within 60' - no alignment field needed |
+| Turn Undead (Cleric) | `undead` on target | The 2d6 table keys off undead type; a GM tag supplies it for custom undead that OSE does not classify |
+| Divert the Wicked (Paladin) | `evil` on target | Taunt targeting needs the evil qualifier to know what the paladin can divert |
+| Holy Resistance (Paladin) | `evil` on attacker | Damage-reduction hook triggers when the ATTACKER is tagged evil (mirror: GM tags the attacker, not the victim) |
+| Any "holy/dark" damage vs creature type | `evil` / `undead` / `demon` | GM-declared creature properties replace missing monster data across all systems |
+
+The tag-toggle converts "creature property" features from unmappable to
+automatable: the GM declares the property once, and every feature keyed on
+it reads the same flag. This is the pattern's leverage - one tag, many
+consumers.
+
 Each entry follows the same shape: a thin macro that declares intent and a
 module hook that enforces and consumes.
 
 ## Delivery model
 
-- **Today:** macros ship as documented source files the GM pastes into a
-  Macro and drags to the hotbar. Zero dependencies.
-- **Optional:** ship a Macro compendium pack in the module so macros are
-  drag-and-drop from the compendium sidebar.
+- **Compendium pack (shipped):** the module ships a **Reforged Macros**
+  Macro compendium pack (`packs/reforged-macros`, declared in module.json).
+  GMs drag macros from the compendium to the hotbar; each macro carries a
+  general-audience header comment (how to use, what it needs, what you
+  see, troubleshooting) and a themed core icon. Rebuild with
+  `node scripts/build_macros_pack.mjs packs/reforged-macros` after
+  editing any source file in `scripts/automation/macros/`.
 - **Optional:** itemacro integration - attach macros to the ability items
   themselves so clicking the ability runs the macro. itemacro supports OSE
   natively; the module stays compatible by exposing `game.ose-reforged.*`
