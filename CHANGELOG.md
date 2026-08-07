@@ -1,14 +1,14 @@
 # CHANGELOG
 
-## 1.1.0 — 2026-08-07
+## 1.1.0 - 2026-08-07
 
 Automation layer: Active Effects + roll/save metadata.
 
-- **4 Active Effects** (`transfer: true`, applied passively when the item is
-  placed on a character):
+- **4 Active Effects** that apply automatically when the item is placed on a
+  character:
   - Halfling **Stout Heart**: +2 to spell saves (charm/dominate/possess/compel).
-  - Halfling **Missile Attack Bonus**: +1 to missile attack rolls
-    (previously a manual Tweaks entry in the official module).
+  - Halfling **Missile Attack Bonus**: +1 to missile attack rolls (was a
+    manual Tweaks entry in the official module, now automatic).
   - Halfling **Initiative Bonus**: +1 to initiative (optional rule).
   - Svirfneblin **Illusion Resistance**: +2 to spell saves vs illusions.
 - **Roll/save metadata on 84 items** following the official OSE module's
@@ -20,7 +20,7 @@ Automation layer: Active Effects + roll/save metadata.
   (Open Locks 10%, Climb 25%, Acrobat CS 40%, TW 40%, etc.).
 - Full automation documentation in `docs/AUTOMATION.md`.
 
-## 1.0.0 — 2026-08-07
+## 1.0.0 - 2026-08-07
 
 Initial release.
 
@@ -32,5 +32,5 @@ Initial release.
 - Sage class authored from OSE_NEW_CONTENT.md (Precise Strikes, Sage Skills,
   Broad Knowledge, Erudite Sense, Keen Observation, Medical Prowess, Research,
   Workshop, Savant).
-- Generated from the houserules sources — regenerate with
+- Generated from the houserules sources: regenerate with
   `scripts/generate_packs.py` + `scripts/build_pack.mjs`.

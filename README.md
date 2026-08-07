@@ -1,5 +1,10 @@
 # OSE Reforged Rules for Foundry VTT
 
+[![Foundry VTT v14](https://img.shields.io/badge/Foundry%20VTT-v14-green)](https://foundryvtt.com/)
+[![OSE System](https://img.shields.io/badge/OSE-2.3.0%2B-blue)](https://foundryvtt.com/packages/ose)
+[![Module Version](https://img.shields.io/badge/version-1.1.0-blue)](./module.json)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
 Compendium module for [Old-School Essentials](https://foundryvtt.com/packages/ose)
 containing **APO's Reforged class features** for every class.
 
@@ -7,10 +12,10 @@ Each class folder in the `Reforged Class Features` compendium contains the full,
 play-ready set of class abilities for that class under APO's house rules:
 
 - **Standard** abilities, copied unchanged from the official OSE class abilities
-- **Modified** abilities — official features reworked by the Reforged rules
+- **Modified** abilities: official features reworked by the Reforged rules
   (renamed where required, e.g. *Immunity to Ghoul Paralysis* →
   *Immunity to Sleep and Paralysis*)
-- **New** abilities — features added by the Reforged rules (e.g. the Fighter's
+- **New** abilities: features added by the Reforged rules (e.g. the Fighter's
   *Cleave*, the Cleric's *Holy Sense*)
 
 Every item carries a `flags.ose-apo-reforged-rules.origin` marker
@@ -21,16 +26,27 @@ Every item carries a `flags.ose-apo-reforged-rules.origin` marker
 This module ships two automation layers, following the official OSE module's
 metadata pattern and going one step further with Active Effects:
 
-- **4 Active Effects** (transfer: true) that apply passively when the item
-  is placed on a character: Halfling Stout Heart (+2 spell saves), Halfling
-  Missile Attack Bonus (+1 missile), Halfling Initiative Bonus (+1
-  initiative), Svirfneblin Illusion Resistance (+2 spell saves).
+- **4 Active Effects** that apply automatically when the item is placed on a
+  character: Halfling Stout Heart (+2 spell saves), Halfling Missile Attack
+  Bonus (+1 missile), Halfling Initiative Bonus (+1 initiative), Svirfneblin
+  Illusion Resistance (+2 spell saves).
 - **Roll/save metadata on 84 items** so every dice-mechanic ability
   (X-in-6 checks, percentile skills, save triggers) is rollable directly
   from the character sheet, with blind rolls for secret GM checks.
 
 Full documentation of every effect, what it does, what you see, and where it
 affects the OSE system: **[docs/AUTOMATION.md](docs/AUTOMATION.md)**.
+
+## Installation
+
+1. In Foundry VTT, open **Add-on Modules** → **Install Module**.
+2. Paste the manifest URL:
+
+   ```
+   https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/releases/latest/download/module.json
+   ```
+
+3. Enable the module in your world.
 
 ## Contents
 
@@ -52,13 +68,13 @@ Compendium: **Reforged Class Features** (Item, system `ose`)
 
 ## Sources
 
-- [OSE_HOUSE_RULES.md](https://github.com/apoapostolov/lifestyle/blob/main/rpg_projects/houserules/old-school-essentials/OSE_HOUSE_RULES.md)
-  — Class Rework section (Basic / Demihuman / Advanced classes)
-- [OSE_NEW_CONTENT.md](https://github.com/apoapostolov/lifestyle/blob/main/rpg_projects/houserules/old-school-essentials/OSE_NEW_CONTENT.md)
-  — the Sage class
+- `OSE_HOUSE_RULES.md`: Class Rework section (Basic / Demihuman / Advanced
+  classes)
+- `OSE_NEW_CONTENT.md`: the Sage class
 - Official OSE class abilities (Advanced Fantasy Player's Tome module)
-- `ose-statblock-importer` `homebrew/homebrew.json` — machine-readable homebrew
-  abilities/modifications used by the character importer
+- [ose-statblock-importer](https://github.com/apoapostolov/OSE-Statblock-Importer-for-Foundry-VTT)
+  `homebrew/homebrew.json`: machine-readable homebrew abilities/modifications
+  used by the character importer
 
 ## Regenerating the packs
 
@@ -78,4 +94,4 @@ Change a house rule? Update the sources, rerun, bump version.
 
 ## License
 
-MIT
+MIT: see [LICENSE](./LICENSE).
