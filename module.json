@@ -23,18 +23,30 @@
   ],
   "packs": [
     {
-      "name": "reforged-class-features",
-      "label": "Reforged Class Features",
-      "path": "packs/reforged-class-features",
-      "type": "Item",
-      "system": "ose",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      },
-      "flags": {}
+     "name": "reforged-class-features",
+     "label": "Reforged Class Features",
+     "path": "packs/reforged-class-features",
+     "type": "Item",
+     "system": "ose",
+     "ownership": {
+      "PLAYER": "OBSERVER",
+      "ASSISTANT": "OWNER"
+     },
+     "flags": {}
+    },
+    {
+     "name": "reforged-macros",
+     "label": "Reforged Macros",
+     "path": "packs/reforged-macros",
+     "type": "Macro",
+     "system": "ose",
+     "ownership": {
+      "PLAYER": "OBSERVER",
+      "ASSISTANT": "OWNER"
+     },
+     "flags": {}
     }
-  ],
+    ],
   "relationships": {
     "systems": [
       {
