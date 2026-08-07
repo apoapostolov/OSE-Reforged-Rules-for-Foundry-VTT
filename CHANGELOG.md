@@ -2,6 +2,20 @@
 
 ## 1.2.0 - 2026-08-07
 
+Docs: user-oriented README automation guide + house rules source published.
+
+- README now lists **every automated effect per class** in tables with
+  plain-language explanations and step-by-step trigger instructions
+  (newbie-friendly: legend for the automation badges, per-class tables from
+  Basic to New classes).
+- Published the full Reforged house rules set under
+  `docs/house-rules/` (OSE_HOUSE_RULES.md v1.3.5, OSE_NEW_CONTENT.md,
+  CHANGELOG.md, TORCH_REALISM_SLAVIC.md, D&D_DESCRIPTORS.md). Internal
+  management and statblock-importer docs are not published. The official
+  OSE Player's Tome text is excluded (copyright).
+- Notion links in OSE_HOUSE_RULES.md converted to local anchors; private
+  Notion-hosted image replaced with a note.
+
 Tier 1 automation layer: chat-card buttons, roll bonuses, and sheet toggles
 for Reforged class features. Every button has an emoji/glyph and a hover
 tooltip explaining the rule it applies.
