@@ -45,17 +45,20 @@ in full context.
 
 ## Automation summary
 
-Three layers, in the order they appear on your sheet:
+Four layers, in the order they appear on your sheet:
 
 | Layer | What it does | Where you see it |
 | --- | --- | --- |
 | 🪄 Active Effects (4) | Permanent bonuses that apply the moment the item is on your sheet | Stats change: saves, attack mods, initiative |
 | 🎲 Roll metadata (84 items) | Every dice-mechanic ability rolls correctly from the sheet | Dice icon on the ability; blind rolls stay hidden |
 | 🔘 Runtime buttons (v1.2.0+) | Chat-card buttons, roll bonuses, and toggles for features that need a decision | Buttons on attack/save cards; toggle row in the sheet header |
+| 🎯 Macro automation (9 effects, 7 macros) | Player- and GM-triggered effects: click a macro to declare a charge, mark an enemy unaware, swear an oath, or tag a creature as Evil, and the module applies the effect on your next roll | Macros in the **Reforged Macros** compendium pack (drag to hotbar); results appear on your attack cards and in chat |
 
 Every button has an emoji and a hover tooltip that quotes the rule text, so
 you never have to guess what a button does. The full per-class breakdown is
-in **[docs/AUTOMATION.md](docs/AUTOMATION.md)**.
+in **[docs/AUTOMATION.md](docs/AUTOMATION.md)**; the macro layer's
+architecture and each macro's trigger is in
+**[docs/MACRO_AUTOMATION.md](docs/MACRO_AUTOMATION.md)**.
 
 ## Installation
 
@@ -85,6 +88,7 @@ Tier 1 Automation` module setting.
 | Document | For | Contents |
 | --- | --- | --- |
 | [docs/AUTOMATION.md](docs/AUTOMATION.md) | Players and GMs | Every automated effect per class, what the rule does, how to trigger it |
+| [docs/MACRO_AUTOMATION.md](docs/MACRO_AUTOMATION.md) | Players and GMs | The macro layer: each macro, what it triggers, the tag-toggle pattern |
 | [TODO.md](TODO.md) | Players and GMs | Class features that are not automated yet, why, and what automation will feel like |
 | [docs/house-rules/](docs/house-rules/README.md) | Players and GMs | The full Reforged ruleset the compendium is built from |
 | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) | Developers | What is implemented, the architecture, what remains (Tier 2+) |
