@@ -83,34 +83,6 @@ Five remain below, plus four that are deliberately left to the table.
   correct morale modifier and shows it on the hireling's card. The
   recruiting math stops being a spreadsheet.
 
-## What was already automated (moved here from earlier versions of this page)
-
-These were on the TODO list when this module shipped and are now done:
-
-- **Paladin - Smite Evil** - natural 20 (19 at 9th, 18 at 14th) vs an
-  Evil-tagged creature: max damage plus an extra damage roll. The GM tags
-  the creature with the Cleanse Evil macro; the module detects the smite
-  and posts the card.
-- **Paladin - Dedication to Law and Good** - +1 to hit vs Evil creatures
-  with HD >= the paladin's level, +2 damage vs HD < level. Reads the same
-  Evil tag.
-- **Ranger - Enemy Slayer** - mark a target unaware with the macro; +4 to
-  hit and double damage on the next attack against it.
-- **Drow - Dark Assassination** - in darkness, +4 to hit or double damage
-  (your choice) against an unaware or blinded creature.
-- **Barbarian - Charge Fury** - declare a charge; the next melee attack
-  gains +2 to hit and +2 plus Strength to damage; a kill re-arms it.
-- **Half-Orc - Stubborn Vitality** - at 0 HP or lower, the Constitution
-  loss is reduced (by 1, 2 at 5th, 3 at 9th); the module posts the reduced
-  amount.
-- **Gnome - Blink Away** - once per day, taking damage makes you invisible
-  until your next turn or until damaged again.
-- **Illusionist - Illusion Savvy** - a WIS check to disbelieve an illusion
-  you can see.
-- **Knight - Battle Oath** - once per encounter, swear an oath; hirelings
-  get +2 morale while you stand, and the module clears it when you fall or
-  the encounter ends.
-
 ## Likely stays manual
 
 These are probably not worth automating, and the module will likely leave
