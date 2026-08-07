@@ -1,0 +1,53 @@
+{
+  "id": "ose-apo-reforged-rules",
+  "title": "Old-School Eessentials Reforged Rules",
+  "description": "APO's Reforged class features for OSE: compendium of class abilities mixing the standard OSE class features with APO's modifications and new features, for every Basic, Demihuman, and Advanced class plus the new Sage class.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14.359",
+    "maximum": "14"
+  },
+  "authors": [
+    {
+      "name": "Apostol Apostolov",
+      "email": "apps@apostolapostolov.com",
+      "discord": "ApoApostolov"
+    }
+  ],
+  "packs": [
+    {
+      "name": "reforged-class-features",
+      "label": "Reforged Class Features",
+      "path": "packs/reforged-class-features",
+      "type": "Item",
+      "system": "ose",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "ose",
+        "type": "system",
+        "compatibility": {
+          "minimum": "2.3.0"
+        }
+      }
+    ]
+  },
+  "url": "https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT",
+  "manifest": "https://raw.githubusercontent.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/main/module.json",
+  "download": "https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/archive/refs/heads/main.zip",
+  "readme": "https://raw.githubusercontent.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/main/README.md",
+  "changelog": "https://raw.githubusercontent.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/main/CHANGELOG.md",
+  "bugs": "https://github.com/apoapostolov/OSE-Reforged-Rules-for-Foundry-VTT/issues",
+  "license": "MIT",
+  "flags": {
+    "allowBugReporter": true
+  }
+}
