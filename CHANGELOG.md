@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## 1.1.0 — 2026-08-07
+
+Automation layer: Active Effects + roll/save metadata.
+
+- **4 Active Effects** (`transfer: true`, applied passively when the item is
+  placed on a character):
+  - Halfling **Stout Heart**: +2 to spell saves (charm/dominate/possess/compel).
+  - Halfling **Missile Attack Bonus**: +1 to missile attack rolls
+    (previously a manual Tweaks entry in the official module).
+  - Halfling **Initiative Bonus**: +1 to initiative (optional rule).
+  - Svirfneblin **Illusion Resistance**: +2 to spell saves vs illusions.
+- **Roll/save metadata on 84 items** following the official OSE module's
+  pattern: every dice-mechanic ability (X-in-6 checks, Thief/Acrobat/
+  Barbarian/Assassin percentile skills, Sage skills, save triggers) is now
+  rollable directly from the character sheet, with blind rolls for secret
+  GM checks.
+- House-rule level 1 values applied to reworked percentile skills
+  (Open Locks 10%, Climb 25%, Acrobat CS 40%, TW 40%, etc.).
+- Full automation documentation in `docs/AUTOMATION.md`.
+
 ## 1.0.0 — 2026-08-07
 
 Initial release.

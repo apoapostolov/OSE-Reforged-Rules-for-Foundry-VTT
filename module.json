@@ -2,7 +2,7 @@
   "id": "ose-apo-reforged-rules",
   "title": "Old-School Eessentials Reforged Rules",
   "description": "APO's Reforged class features for OSE: compendium of class abilities mixing the standard OSE class features with APO's modifications and new features, for every Basic, Demihuman, and Advanced class plus the new Sage class.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "compatibility": {
     "minimum": "13",
     "verified": "14.359",

@@ -47,6 +47,104 @@ TIERS = {
     "New Classes": ["sage"],
 }
 
+# ---------------------------------------------------------------- metadata
+# Roll/save metadata per (class, item name). Mirrors the official OSE module
+# pattern: `roll` formula + `rollType` (below/above/result) + `rollTarget` +
+# `blindroll` (secret DM rolls) + `save` (save category the ability triggers).
+# The official module applies ZERO active effects; it encodes mechanics as
+# roll metadata and manual Tweaks entries. We keep that pattern for dice
+# mechanics and add transfer:true AEs only where the OSE data model can
+# express a passive numeric bonus (saves / attack mods / initiative).
+META = {
+    # ---- Cleric
+    ("cleric", "Cure Disease (Ritual)"): {"roll": "1d6", "rollType": "below", "rollTarget": 4, "blindroll": False},
+    # ---- Drow
+    ("drow", "Poisoncraft (Spiders)"): {"roll": "1d3", "rollType": "result", "rollTarget": 0, "blindroll": False},
+    # ---- Elf / Half-Elf / Drow / Half-Orc low-light vision: descriptive only
+    # ---- Gnome
+    ("gnome", "Terrain Hiding"): {"roll": "1d6", "rollType": "below", "rollTarget": 4, "blindroll": True},
+    # ---- Halfling
+    ("halfling", "Terrain Hiding"): {"roll": "1d6", "rollType": "below", "rollTarget": 5, "blindroll": True},
+    # ---- Half-Elf
+    ("half-elf", "See Through Pretense"): {"roll": "1d6", "rollType": "below", "rollTarget": 1, "blindroll": True},
+    # ---- Half-Orc
+    ("half-orc", "Grim Tenacity"): {"save": "death"},
+    ("half-orc", "Brutal Grapple"): {"roll": "1d4", "rollType": "result", "rollTarget": 0, "blindroll": False},
+    # ---- Svirfneblin
+    ("svirfneblin", "Stone Camouflage"): {"roll": "1d6", "rollType": "below", "rollTarget": 4, "blindroll": True},
+    ("svirfneblin", "Sure-Footed"): {"save": "breath"},
+    # ---- Acrobat (FA = Falling skill, base 25% per Reforged progression)
+    ("acrobat", "Tumbling Strike"): {"roll": "1d100", "rollType": "below", "rollTarget": 25, "blindroll": False},
+    # ---- Barbarian
+    ("barbarian", "Battle Senses"): {"save": "death"},
+    # ---- Bard
+    ("bard", "Stunning Flourish"): {"save": "spell"},
+    ("bard", "Bardic Knowledge"): {"roll": "1d6", "rollType": "below", "rollTarget": 1, "blindroll": True},
+    # ---- Druid
+    ("druid", "Herbal Salves"): {"roll": "1d3", "rollType": "result", "rollTarget": 0, "blindroll": False},
+    ("druid", "Antivenom Craft"): {"roll": "1d6", "rollType": "below", "rollTarget": 5, "blindroll": False},
+    # ---- Illusionist
+    ("illusionist", "Minor Conjurations"): {"roll": "1d6", "rollType": "below", "rollTarget": 3, "blindroll": True},
+    # ---- Paladin
+    ("paladin", "Clean of Body"): {"roll": "1d6", "rollType": "below", "rollTarget": 2, "blindroll": False},
+    # ---- Ranger
+    ("ranger", "Enemy Slayer"): {"save": "death"},
+    # ---- Sage (percentile skills follow the Thief progression pattern)
+    ("sage", "Sage Skills"): {"roll": "1d100", "rollType": "below", "rollTarget": 25, "blindroll": False},
+    ("sage", "Erudite Sense"): {"roll": "1d100", "rollType": "below", "rollTarget": 25, "blindroll": True},
+    ("sage", "Keen Observation"): {"roll": "1d100", "rollType": "below", "rollTarget": 20, "blindroll": False},
+    ("sage", "Medical Prowess"): {"roll": "1d100", "rollType": "below", "rollTarget": 20, "blindroll": False},
+    ("sage", "Research (Downtime)"): {"roll": "1d100", "rollType": "below", "rollTarget": 25, "blindroll": True},
+    ("sage", "Workshop (Downtime)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": False},
+    # ---- Modified thief/acrobat/barbarian skill items: house-rule L1 values
+    #      (official module ships official L1 targets; Reforged reworks them)
+    ("thief", "Open Locks (OL)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": False},
+    ("thief", "Climb sheer surfaces (CS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 25, "blindroll": False},
+    ("thief", "Hear noise (HN)"): {"roll": "1d6", "rollType": "below", "rollTarget": 1, "blindroll": True},
+    ("thief", "Hide In Shadows (HS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": True},
+    ("thief", "Move silently (MS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": True},
+    ("thief", "Pick Pockets (PP)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": False},
+    ("thief", "Find/remove treasure traps (TR)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": True},
+    ("assassin", "Climb sheer surfaces (CS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 25, "blindroll": False},
+    ("assassin", "Move Silently (MS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": True},
+    ("assassin", "Hear noise (HN)"): {"roll": "1d6", "rollType": "below", "rollTarget": 1, "blindroll": True},
+    ("acrobat", "Climb sheer surfaces (CS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 40, "blindroll": False},
+    ("acrobat", "Tightrope Walking (TW)"): {"roll": "1d100", "rollType": "below", "rollTarget": 40, "blindroll": True},
+    ("acrobat", "Falling (FA)"): {"roll": "1d100", "rollType": "below", "rollTarget": 25, "blindroll": False},
+    ("acrobat", "Hide in shadows (HS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": True},
+    ("acrobat", "Move Silently (MS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": True},
+    ("barbarian", "Climb Sheer Surfaces (CS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 25, "blindroll": False},
+    ("barbarian", "Hide In Undergrowth (HD)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": True},
+    ("barbarian", "Move Silently (MS)"): {"roll": "1d100", "rollType": "below", "rollTarget": 10, "blindroll": False},
+}
+
+# Passive always-on Active Effects (transfer: true, phase initial).
+# Only features the OSE data model can express as numeric stat changes.
+# Keys are OSE actor system paths (see systems/ose template.json).
+# Note: OSE saves are target numbers — LOWER is better — so a "+2 bonus to
+# saves vs X" is encoded as value -2 on the matching save category.
+AES = {
+    # Halfling Stout Heart: +2 saves vs charm/dominate/possess/compel (spell saves)
+    ("halfling", "Stout Heart"): [
+        {"key": "system.saves.spell.value", "type": "add", "value": "-2"},
+    ],
+    # Halfling Missile Attack Bonus (official item): the official module tells
+    # the player to type +1 into Tweaks manually. An AE automates it.
+    ("halfling", "Missile Attack Bonus"): [
+        {"key": "system.thac0.mod.missile", "type": "add", "value": "1"},
+    ],
+    # Halfling Initiative Bonus (official optional-rule item): same manual
+    # Tweaks note in the official module; automate it.
+    ("halfling", "Initiative Bonus (Optional Rule)"): [
+        {"key": "system.initiative.mod", "type": "add", "value": "1"},
+    ],
+    # Svirfneblin Illusion Resistance (official item): +2 saves vs illusions
+    # -> spell save category.
+    ("svirfneblin", "Illusion Resistance"): [
+        {"key": "system.saves.spell.value", "type": "add", "value": "-2"},
+    ],
+}
+
 # Features REMOVED by the house rules (doc lines say "loses X" / replaced).
 # Keyed by class: official item names to drop from the compendium.
 REMOVALS = {
@@ -140,6 +238,58 @@ def make_item(name, text, icon, class_key, origin, oid=None, official=None):
             "lastModifiedBy": "apoapostolov",
         },
     }
+
+
+def make_effect(name, changes, transfer=True, disabled=False, icon="icons/svg/aura.svg"):
+    """Build a Foundry v14 ActiveEffect embedded on an item.
+
+    v14 change schema: system.changes[] with {key, type (string), value,
+    phase ("initial"), priority}. OSE uses core AE application (no system
+    override), so transfer:true item effects apply to the actor. OSE's
+    prepareDerivedData runs after the "initial" phase, so stat changes feed
+    into derived values (saves, AC, movement).
+    """
+    return {
+        "_id": new_id(),
+        "name": name,
+        "type": "base",
+        "img": icon,
+        "system": {
+            "changes": [
+                {
+                    "key": c["key"],
+                    "type": c.get("type", "add"),
+                    "value": c.get("value", ""),
+                    "phase": "initial",
+                    "priority": None,
+                }
+                for c in changes
+            ]
+        },
+        "disabled": disabled,
+        "transfer": transfer,
+        "duration": {"value": None, "units": "seconds", "expiry": None, "expired": False},
+        "statuses": [],
+        "flags": {},
+    }
+
+
+def apply_meta_and_aes(item, cls):
+    """Apply roll/save metadata (META) and passive active effects (AES) to an
+    item based on its (class, name). Official items keep their own metadata
+    unless META overrides it; META entries mirror the official module pattern.
+    """
+    name = item["name"]
+    meta = META.get((cls, name))
+    if meta:
+        for key, value in meta.items():
+            if key == "save":
+                item["system"]["save"] = value
+            else:
+                item["system"][key] = value
+    changes = AES.get((cls, name))
+    if changes:
+        item["effects"] = [make_effect(name, changes)]
 
 
 # ---------------------------------------------------------------- Sage
@@ -326,6 +476,11 @@ def main():
                         **make_item(name, text, SAGE_ICON, "sage", "new"),
                         "folder": cls_folder,
                     })
+
+            # 5) apply roll/save metadata + passive active effects for this class
+            for it in items:
+                if it.get("folder") == cls_folder:
+                    apply_meta_and_aes(it, cls)
 
     manifest = {
         "folders": folders,

@@ -16,6 +16,22 @@ play-ready set of class abilities for that class under APO's house rules:
 Every item carries a `flags.ose-apo-reforged-rules.origin` marker
 (`standard` | `modified` | `new`) so GMs can filter at a glance.
 
+## Automation
+
+This module ships two automation layers, following the official OSE module's
+metadata pattern and going one step further with Active Effects:
+
+- **4 Active Effects** (transfer: true) that apply passively when the item
+  is placed on a character: Halfling Stout Heart (+2 spell saves), Halfling
+  Missile Attack Bonus (+1 missile), Halfling Initiative Bonus (+1
+  initiative), Svirfneblin Illusion Resistance (+2 spell saves).
+- **Roll/save metadata on 84 items** so every dice-mechanic ability
+  (X-in-6 checks, percentile skills, save triggers) is rollable directly
+  from the character sheet, with blind rolls for secret GM checks.
+
+Full documentation of every effect, what it does, what you see, and where it
+affects the OSE system: **[docs/AUTOMATION.md](docs/AUTOMATION.md)**.
+
 ## Contents
 
 Compendium: **Reforged Class Features** (Item, system `ose`)
@@ -36,12 +52,13 @@ Compendium: **Reforged Class Features** (Item, system `ose`)
 
 ## Sources
 
-- `OSE_HOUSE_RULES.md` — Class Rework section (Basic / Demihuman / Advanced classes)
-- `OSE_NEW_CONTENT.md` — the Sage class
+- [OSE_HOUSE_RULES.md](https://github.com/apoapostolov/lifestyle/blob/main/rpg_projects/houserules/old-school-essentials/OSE_HOUSE_RULES.md)
+  — Class Rework section (Basic / Demihuman / Advanced classes)
+- [OSE_NEW_CONTENT.md](https://github.com/apoapostolov/lifestyle/blob/main/rpg_projects/houserules/old-school-essentials/OSE_NEW_CONTENT.md)
+  — the Sage class
 - Official OSE class abilities (Advanced Fantasy Player's Tome module)
-- [ose-statblock-importer](https://github.com/apoapostolov/OSE-Statblock-Importer-for-Foundry-VTT)
-  `homebrew/homebrew.json` — machine-readable homebrew abilities/modifications
-  used by the character importer
+- `ose-statblock-importer` `homebrew/homebrew.json` — machine-readable homebrew
+  abilities/modifications used by the character importer
 
 ## Regenerating the packs
 
